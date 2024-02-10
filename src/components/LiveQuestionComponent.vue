@@ -84,7 +84,7 @@ export default {
           fields: '*'
         },
         headers: {
-          'X-RapidAPI-Key': '78e8ecbccemsh34afad1bc9300aap198584jsn992a45d03af6',
+          'X-RapidAPI-Key': process.env.VUE_APP_X_RAPID_API_KEY,
           'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
         }
       };
@@ -125,7 +125,7 @@ export default {
         headers: {
           'content-type': 'application/json',
           'Content-Type': 'application/json',
-          'X-RapidAPI-Key': "78e8ecbccemsh34afad1bc9300aap198584jsn992a45d03af6",
+          'X-RapidAPI-Key': process.env.VUE_APP_X_RAPID_API_KEY,
           'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
         },
         data: {
