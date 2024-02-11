@@ -47,7 +47,7 @@ export default {
       this.socket.emit('createLobbyRequest');
       this.socket.once('lobbyCreated', (lobbyCode) => {
       console.log(lobbyCode);
-      this.$router.push({ name: 'lobby', params: { lobbyCode } })
+      this.$router.push({ path: `/lobby/${lobbyCode}` });
       });
     }
   }

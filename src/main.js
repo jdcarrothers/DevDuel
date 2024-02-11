@@ -1,16 +1,18 @@
 // Import Vue and VueRouter
 import { createApp } from 'vue'
-import { createRouter,  createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 // Import your components
 import App from './App.vue'
 import HostComponent from './components/HostComponent.vue'
+import LiveQuestionComponent from './components/LiveQuestionComponent.vue'
 import ConnectComponent from './components/ConnectComponent.vue'
 
 // Define routes
 const routes = [
-  { path: '/', component: ConnectComponent },
-  { path: '/./lobby', component: HostComponent }
+  { path: '/', component: LiveQuestionComponent },
+  { path: '/lobby/:lobbyID', component: HostComponent },
+  { path: '/connect', component: ConnectComponent }
 ]
 
 // Create router instance
@@ -19,12 +21,8 @@ const router = createRouter({
   routes
 })
 
-// Create and mount the root Vue app
 const app = createApp(App)
 
-// Register components
-app.component('HostComponent', HostComponent)
-app.component('ConnectComponent', ConnectComponent)
 
 app.use(router)
 app.mount('#app')
