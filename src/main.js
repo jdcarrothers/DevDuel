@@ -4,15 +4,35 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Import your components
 import App from './App.vue'
-import HostComponent from './components/HostComponent.vue'
+import LobbyAdminPanelComponent from './components/LobbyAdminPanelComponent.vue'
 import LiveQuestionComponent from './components/LiveQuestionComponent.vue'
-import ConnectComponent from './components/ConnectComponent.vue'
+import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.vue'
+import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
+
 
 // Define routes
 const routes = [
-  { path: '/', component: LiveQuestionComponent },
-  { path: '/lobby/:lobbyID', component: HostComponent },
-  { path: '/connect', component: ConnectComponent }
+  { 
+    name: 'LiveQuestion',
+    path: '/lobby/:lobbyID', 
+    component: LiveQuestionComponent,
+  },
+  { 
+    name: 'HostLobbyAdmin',
+    path: '/host/:lobbyID', 
+    component: LobbyAdminPanelComponent,
+  },
+  { 
+    name: 'UserLobby',
+    path: '/join/:lobbyID', 
+    component: LobbyUserPanelComponent,
+    params: true
+  },
+  { 
+    name: 'CreateLobby',
+    path: '/connect', 
+    component: JoinOrCreateLobbyComponent 
+  }
 ]
 
 // Create router instance

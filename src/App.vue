@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-view></router-view>
+    <RouterView />
   </div>
 </template>
 
@@ -9,7 +9,12 @@
 export default {
   name: 'App',
   components: {
-  }
+
+  },
+  // remove when needed
+  mounted() {
+      this.$router.push('/connect');
+    },
 }
 </script>
 
