@@ -1,9 +1,14 @@
 <template>
-  <div>
-    <div>Hello</div>
-    <h1>Lobby code: {{ lobbyCode }}</h1>
-    <h1 v-if="players.length">{{ players.join(', ') }}</h1>
-    <button @click="startQuiz">Start Quiz</button>
+  <div class="lobby-container">
+    <div class="header">Welcome to the Quiz Lobby</div>
+    <h1 class="lobby-code">Lobby code: {{ lobbyCode }}</h1>
+    <div v-if="players.length" class="player-list">
+      <h2>Players:</h2>
+      <div class="player-grid">
+        <div v-for="player in players" :key="player" class="player-box">{{ player }}</div>
+      </div>
+    </div>
+    <button class="btn" @click="startQuiz">Start Quiz</button>
   </div>
 </template>
 
@@ -50,5 +55,66 @@ export default {
 </script>
 
 <style scoped>
-/* Your scoped styles here */
+.lobby-container {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.header {
+  color: #4a76a8;
+  margin-bottom: 20px;
+}
+
+.lobby-code {
+  color: #3a5a78;
+  margin-bottom: 10px;
+}
+
+.player-list h2 {
+  color: #45524b;
+}
+
+.btn {
+  background-color: #4a76a8;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #3a5a78;
+}
+.player-list {
+  margin: 20px 0;
+}
+
+.player-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  justify-content: center; /* Center the boxes */
+}
+
+.player-box {
+  display: inline-block;
+  background-color: #4a76a8;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 5px;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
 </style>
