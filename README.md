@@ -1,4 +1,4 @@
-# bytebout
+# devduel
 
 ## Project setup
 

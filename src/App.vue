@@ -14,7 +14,7 @@ export default {
   },
   // remove when needed
   mounted() {
-      this.$router.push('/connect');
+      // this.$router.push('/lobby/5871?lobbyCode=5871&username=d');
     },
 }
 </script>

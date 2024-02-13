@@ -34,10 +34,8 @@ export default {
     },
     checkGameStart() {
       const intervalId = setInterval(() => {
-        console.log('Checking for game start');
         this.socket.emit('checkForGameStart', this.lobbyCode);
         this.socket.once('gameStartCheck', gameStatus => {
-          console.log(gameStatus);
           if (gameStatus !== "notStarted") {
             clearInterval(intervalId);
             this.navigateToGame();

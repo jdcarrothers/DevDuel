@@ -2,7 +2,9 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const Lobby = require('./lobby');
-
+const fs = require('fs');
+const csv = require('csv-parser');
+const csvFilePath = "tasks.csv";
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -80,8 +82,33 @@ io.on('connection', (socket) => {
             socket.emit('gameStartCheck', 'notFound');
         }
     });
-
-    // Utility functions
+    
+    socket.on("requestRandomQuestion", (lID) => {
+        const lobbyIndex = findLobbyIndex(parseInt(lID));
+        const lobby = lobbies[lobbyIndex];
+        const csvFilePath = "tasks.csv";
+    
+        populateJSONObjectFromCSV(csvFilePath)
+            .then(result => {
+                lobby.currentQuestion = result;
+                console.log(lobby)
+                socket.emit('questionSent', result);
+                console.log(result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    
+    });
+    socket.on('getQuestion', (lID) => {
+        console.log("get q test");
+        const lobbyIndex = findLobbyIndex(parseInt(lID));
+        console.log(lobbyIndex);
+        const lobby = lobbies[lobbyIndex];
+        console.log(lobby);
+        console.log(lobby.currentQuestion);
+        socket.emit('receivedQuetion', lobby.currentQuestion);
+    });
     function generateUniqueLobbyCode() {
         let code;
         do {
@@ -92,6 +119,33 @@ io.on('connection', (socket) => {
 
     function findLobbyIndex(lobbyID) {
         return lobbies.findIndex(lobby => lobby.lobbyCode === lobbyID);
+    }
+
+    async function populateJSONObjectFromCSV(csvFilePath) {
+        return new Promise((resolve, reject) => {
+            const rows = [];
+    
+            const stream = fs.createReadStream(csvFilePath)
+                .pipe(csv());
+    
+            stream.on('data', (row) => {
+                rows.push(row);
+            });
+    
+            stream.on('end', () => {
+                if (rows.length === 0) {
+                    reject(new Error('CSV file is empty'));
+                } else {
+                    const randomIndex = Math.floor(Math.random() * rows.length);
+                    const randomRow = rows[randomIndex];
+                    resolve(randomRow);
+                }
+            });
+    
+            stream.on('error', (error) => {
+                reject(error);
+            });
+        });
     }
 });
 

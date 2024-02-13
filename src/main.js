@@ -5,7 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Import your components
 import App from './App.vue'
 import LobbyAdminPanelComponent from './components/LobbyAdminPanelComponent.vue'
-import LiveQuestionComponent from './components/LiveQuestionComponent.vue'
+import LiveQuestionComponent from './components/LiveComponent.vue'
 import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.vue'
 import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 

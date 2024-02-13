@@ -1,0 +1,32 @@
+1.
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+# Test the function with a sample input
+number = 5
+result = factorial(number)
+print("The factorial of", number, "is", result)
+
+2.
+def print_times_tables(number, limit):
+    for i in range(1, limit + 1):
+        print(number * i)
+
+# Call the function to print the 5 times tables up to 12
+number = 5
+limit = 12
+print_times_tables(number, limit)
+
+
+
+3.
+def sum_of_natural_numbers(n):
+    return (n * (n + 1)) // 2
+
+# Calculate the sum of the first 10 natural numbers
+n = 10
+result = sum_of_natural_numbers(n)
+print(result)

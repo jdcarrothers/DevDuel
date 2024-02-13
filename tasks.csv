@@ -1,0 +1,4 @@
+Question,Language,ExpectedOutput
+Write a python script to find the factorial of a number using recursion.,Python,"120"
+Write a python script to print the 5 times tables up to 12.,Python,"<br>5<br> 10 <br> 15<br>20<br>25<br>30<br>35<br>40<br>45<br>50<br>55<br>60"
+Write a python script to find the sum of the first 10 natural numbers.,Python,"55"
