@@ -1,14 +1,13 @@
 <template>
   <div class="container">
-    <h2>Welcome to the Game Lobby</h2>
-    <p>Connect to a game by entering the game ID and your name. Host a game by clicking the host button.</p>
+    <p class="intro-text">Connect to a game by entering the game ID and your name. Host a game by clicking the host button.</p>
 
     <div class="connect">
-      <label for="lobbyID">Game ID</label>
-      <input id="lobbyID" v-model="joinCredLobbyID" type="text" placeholder="Enter Lobby ID">
+      <label for="lobbyID" class="input-label">Game ID</label>
+      <input id="lobbyID" v-model="joinCredLobbyID" type="text" placeholder="Enter Lobby ID" class="input-field">
 
-      <label for="username">Username</label>
-      <input id="username" v-model="joinCredUsername" type="text" placeholder="Enter Your Name">
+      <label for="username" class="input-label">Username</label>
+      <input id="username" v-model="joinCredUsername" type="text" placeholder="Enter Your Name" class="input-field">
 
       <button class="btn" @click="connectToGame">Connect</button>
     </div>
@@ -87,48 +86,63 @@ export default {
   font-family: 'Arial', sans-serif;
   color: #333;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 40px auto;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  background-color: #f9f9f9;
 }
 
 h2 {
   color: #4a76a8;
+  font-size: 2em; /* Larger and more prominent */
+  margin-bottom: 20px;
 }
 
-.connect, .host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #45524b;
-  color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  margin: 10px 0;
+.intro-text {
+  color: #45524b; /* Darker color for better readability */
+  margin-bottom: 20px;
+  font-size: 1.2em; /* Slightly larger font size for prominence */
+  line-height: 1.6; /* Improved line height for readability */
+  font-weight: 600; /* Slightly bold but not as much as headers */
+  max-width: 80%; /* Max width for optimal reading length */
+  margin-left: auto; /* Centering the paragraph */
+  margin-right: auto; /* Centering the paragraph */
 }
 
-.connect input, .host input {
+.input-label {
+  display: block;
+  color: #4a76a8; /* Blue theme color for consistency */
+  margin-bottom: 5px;
+  font-size: 1em;
+}
+
+.input-field {
   padding: 10px;
-  margin: 10px 0;
-  border: none;
+  margin-bottom: 20px;
+  border: 2px solid #d0d9e6; /* Consistent with theme */
   border-radius: 4px;
   width: 80%;
+  font-family: 'Arial', sans-serif;
 }
 
 .btn {
-  background-color: #4a76a8;
+  background-color: #2f5683;
   color: white;
-  padding: 10px 15px;
+  padding: 15px 30px;
+  font-size: 1.1em;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  margin-top: 20px;
 }
 
 .btn:hover {
   background-color: #3a5a78;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .separator {
@@ -136,8 +150,13 @@ h2 {
   margin: 20px 0;
 }
 
-label {
-  margin-top: 10px;
-  font-weight: bold;
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .input-field, .btn {
+    width: 90%; /* Adjust input and button width for smaller screens */
+  }
 }
 </style>

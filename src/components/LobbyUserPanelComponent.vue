@@ -41,7 +41,7 @@ export default {
             this.navigateToGame();
           }
         });
-      }, 1000);
+      }, 300);
     },
     navigateToGame() {
       this.$router.push({

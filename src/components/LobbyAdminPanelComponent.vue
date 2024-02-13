@@ -1,7 +1,6 @@
 <template>
   <div class="container-main">
     <div class="lobby-container">
-      <div class="header">Welcome to the Quiz Lobby</div>
       <h1 class="lobby-code">Lobby code: {{ lobbyCode }}</h1>
       <div v-if="players.length" class="player-list">
         <h2>Players:</h2>
@@ -59,7 +58,7 @@ export default {
         this.socket.once('recentPlayers', players => {
           this.players = players;
         });
-      }, 300); // Polling interval in milliseconds
+      }, 300);
     },
     startQuiz() {
       this.socket.emit('startQuiz', this.lobbyCode);
@@ -77,7 +76,7 @@ export default {
         this.btnOneText = "Refresh to select another question";
         this.Question = question.Question;
         this.Language = question.Language;
-        this.ExpectedOutput = "The expected output\n"+ question.ExpectedOutput ;
+        this.ExpectedOutput = "The expected output: "+ question.ExpectedOutput ;
         console.log(question);
       });
       
@@ -87,19 +86,27 @@ export default {
 </script>
 
 <style scoped>
-.lobby-container {
+.container-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch; /* Adjust containers to the same height */
+  margin: 0 20px;
+}
+
+.lobby-container, .question-container {
   text-align: center;
   font-family: 'Arial', sans-serif;
   color: #333;
-  max-width: 600px;
-  margin: 40px auto;
+  flex: 1; /* Assign equal importance to both containers */
+  margin: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   background-color: #f9f9f9;
 }
 
-.header {
+.header, .selected-question h1, .selected-question h2 {
   color: #4a76a8;
   margin-bottom: 20px;
 }
@@ -114,19 +121,24 @@ export default {
 }
 
 .btn {
-  background-color: #4a76a8;
+  background-color: #2f5683;
   color: white;
-  padding: 10px 15px;
+  padding: 15px 30px; /* Increased padding for better clickability */
+  font-size: 1.1em; /* Slightly larger text */
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* Rounded corners */
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+  width: 80%; /* Making button wider */
+  margin: 20px auto; /* Center button in the container */
 }
 
 .btn:hover {
   background-color: #3a5a78;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced hover effect */
 }
+
 .player-list {
   margin: 20px 0;
 }
@@ -136,11 +148,10 @@ export default {
   flex-wrap: wrap;
   gap: 10px;
   padding: 10px;
-  justify-content: center; /* Center the boxes */
+  justify-content: center;
 }
 
 .player-box {
-  display: inline-block;
   background-color: #4a76a8;
   color: white;
   padding: 10px;
@@ -148,29 +159,54 @@ export default {
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin: 5px;
-  white-space: nowrap; /* Prevents text from wrapping */
+  white-space: nowrap;
 }
+
 .question-container {
   text-align: center;
   font-family: 'Arial', sans-serif;
   color: #333;
-  max-width: 600px;
-  margin: 40px auto;
+  flex: 1;
+  margin: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* Consistent background color */
 }
+
+.selected-question h2 {
+  font-size: 1.2em; /* Slightly larger font size */
+}
+
+.selected-question h1 {
+  font-size: 1.4em; /* Slightly larger font size */
+}
+
 .selected-question {
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  color: #333;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  background-color: #e6eef8;
+  padding: 20px; /* Increased padding */
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Inset shadow for depth */
+  margin-top: 20px;
+  text-align: left; /* Align text to the left for readability */
+}
+
+.selected-question div {
+  background-color: #d0d9e6;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
+  white-space: pre-wrap; /* Preserve whitespace and formatting */
+}
+
+@media (max-width: 768px) {
+  .container-main {
+    flex-direction: column; /* Stack containers on top of each other */
+  }
+
+  .btn {
+    width: auto; /* Adjust button width for smaller screens */
+  }
 }
 
 </style>

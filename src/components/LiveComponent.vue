@@ -1,20 +1,28 @@
 <template>
-<div class="container">
-    <button class="button" @click="runCodeAndGetSubmissionToken">Submit Code</button>
-    <codemirror ref="myCodeMirror" v-model="code" :extensions="extensions" class="code-editor"></codemirror>
-    {{ Language }}
-    {{ Question }}
-    <div v-html="ExpectedOutput"> </div>
-    <textarea v-model="codeOutput" class="output"></textarea>
-</div>
+  <div class="coding-container">
+    <div class="problem-container">
+      <h1 :style="{ color: '#3a5a78', marginBottom: '10px' }">{{ Language }}</h1>
+      <h2 :style="{ color: '#4a76a8', marginBottom: '10px' }"> {{ Question }}</h2>
+      <div v-html="ExpectedOutput"></div>
+    </div>
+    <div class="editor-and-button-container">
+      <codemirror ref="myCodeMirror" v-model="code" :extensions="extensions" class="code-editor"></codemirror>
+      <button class="btn" @click="runCodeAndGetSubmissionToken">Submit Code</button>
+      <div class="output-container">
+        <textarea v-model="codeOutput" class="output"></textarea>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { Codemirror } from 'vue-codemirror';
-// import { javascript} from '@codemirror/lang-javascript';
-// import { python } from '@codemirror/lang-python';
-// import { oneDark } from '@codemirror/theme-one-dark';
-// import { EditorView } from '@codemirror/view';
+import { Codemirror } from "vue-codemirror";
+import { EditorView } from "@codemirror/view";
+import { cpp } from "@codemirror/lang-cpp";
+import { python } from "@codemirror/lang-python";
+import { javascript } from "@codemirror/lang-javascript";
+import { java } from "@codemirror/lang-java";
+import { rust } from "@codemirror/lang-rust";
 import socketio from 'socket.io-client';
 import axios from 'axios';
 
@@ -33,6 +41,7 @@ data() {
     Question: "",
     Language: "",
     codeOutput: "",
+    language_id: null,
     };
 },
 mounted() {
@@ -51,20 +60,20 @@ methods: {
         this.encodedCode = btoa(this.code);
 
         const optionsSubmit = {
-            method: 'POST',
-            url: 'https://judge0-ce.p.rapidapi.com/submissions',
-            params: {
-            base64_encoded: 'true',
-            fields: '*'
+              method: 'POST',
+              url: 'https://judge0-ce.p.rapidapi.com/submissions',
+              params: {
+              base64_encoded: 'true',
+              fields: '*'
             },
             headers: {
-            'content-type': 'application/json',
-            'X-RapidAPI-Key': process.env.VUE_APP_X_RAPID_API_KEY,
-            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+              'content-type': 'application/json',
+              'X-RapidAPI-Key': process.env.VUE_APP_X_RAPID_API_KEY,
+              'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
             },
             data: {
-            language_id: 71,
-            source_code: this.encodedCode,
+              language_id: this.language_id,
+              source_code: this.encodedCode,
             }
         };
   try {
@@ -106,25 +115,244 @@ methods: {
     } else {
       alert("Incorrect answer");
     }
-  } catch (error) {
-    console.error(error);
-  }
-},
+    } catch (error) {
+      console.error(error);
+    }
+    },
 
   loadCorrectQuestion() {
         this.socket.emit('getQuestion', this.lobbyCode);
         this.socket.once('receivedQuetion', question => {
           this.Question = question.Question;
-          this.ExpectedOutput = question.ExpectedOutput;
-          this.ExpectedOutput = String(this.ExpectedOutput);
-          this.Languagel = question.Language;
+          this.ExpectedOutput = "Expected output:\n\n" + String(question.ExpectedOutput);
+          
+          this.Language = question.Language;
+          this.loadRequestProperties();
         });
-
     },
-}
+  loadRequestProperties() { 
+    const backgroundColor = '#ecf0f1';
+    const textColor = '#2c3e50'; 
+    const accentColor = '#3498db'; 
+
+    this.customTheme = EditorView.theme({
+      "&": {
+        color: textColor,
+        backgroundColor: backgroundColor
+      },
+      ".cm-content": {
+        caretColor: accentColor
+      },
+      "&.cm-focused .cm-cursor": {
+        borderLeftColor: accentColor
+      },
+      "&.cm-focused .cm-selectionBackground, ::selection": {
+        backgroundColor: accentColor
+      },
+      ".cm-gutters": {
+        backgroundColor: '#bdc3c7', // A lighter grey for the gutters, softer than the main background
+        color: '#7f8c8d', // A mid-tone grey that is easily readable on the lighter gutter background
+        border: `1px solid #bdc3c7`
+      },
+      ".cm-activeLine": {
+        backgroundColor: '#dfe6e9' // A very light grey for the active line to subtly distinguish it
+      },
+      ".cm-matchingBracket, .cm-nonmatchingBracket": {
+        backgroundColor: '#bdc3c7', // A light grey for matching brackets background
+        color: textColor
+      }
+    }, { dark: false });
+
+    const judge0LanguageCodes = new Map([
+    ['C++', 52],
+    ['Python', 71],
+    ['JavaScript', 63],
+    ['Java', 62],
+    ['C#', 51],
+    ['Ruby', 72],
+    ['Go', 60],
+    ['Swift', 83],
+    ['Rust', 73],
+    ['TypeScript', 74],
+    ['C (Clang)', 76],
+    ]);
+    this.language_id = judge0LanguageCodes.get(this.Language);
+    this.getLanguageExtension(this.Language);
+  },
+  // MOST REPETIIVE CODE EVER I COULD NOT GET IT TO WORK OTHERWISE 
+  getLanguageExtension(language) {
+      switch (language) {
+        case 'C++':
+        this.extensions = [cpp(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];
+        break;
+        case 'Python':
+        this.extensions = [python(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];
+        break;
+        case 'JavaScript':
+        this.extensions = [javascript(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];
+        break;
+        case 'Java':
+        this.extensions = [java(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];
+        break;
+        case 'C#':
+        this.extensions = [cpp(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];          
+        break;
+        case 'Ruby':
+          // no ruby mode in codemirror 6
+          return null;
+        case 'Go':
+          // no go mode in codemirror 6
+          return null; 
+        case 'Swift':
+          // no swift mode in codemirror 6
+          return null;
+        case 'Rust':
+          this.extensions = [rust(), this.customTheme, EditorView.theme({
+            '&': {
+              height: '60vh', 
+              overflow: 'auto', 
+            }
+          })];
+          break;
+        case 'TypeScript':
+          // no typescript mode in codemirror 6
+          return null; 
+        case 'C (Clang)':
+        this.extensions = [cpp(), this.customTheme, EditorView.theme({
+          '&': {
+            height: '60vh', 
+            overflow: 'auto', 
+          }
+        })];
+        break;
+        default:
+          return python();
+      }
+    },
+  },
 };
+
 </script>
 
 <style scoped>
-/* Your component styles here */
+.coding-container {
+  display: flex;
+  height: 80vh;
+  gap: 1em;
+}
+
+.problem-container h1 {
+  color: #3a5a78; /* Match the color with .selected-question h1 */
+  font-size: 1.4em; /* Match the font size with .selected-question h1 */
+  margin-bottom: 10px; /* Adjust to match .selected-question h1 */
+}
+
+.problem-container h2 {
+  color: #4a76a8; /* Match the color with .selected-question h2 */
+  font-size: 1.2em; /* Match the font size with .selected-question h2 */
+  margin-bottom: 10px; /* Adjust to match .selected-question h2 */
+}
+
+.problem-container {
+  background-color: #e6eef8; /* Match the background color with .selected-question */
+  padding: 20px; /* Match the padding with .selected-question */
+  border-radius: 8px; /* Match the border-radius with .selected-question */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Match the box shadow with .selected-question */
+  margin-top: 20px; /* Ensure consistent spacing around the container */
+  text-align: left; /* Align text to the left for readability */
+}
+
+.problem-container div {
+  background-color: #d0d9e6; /* Match the background color with .selected-question div */
+  padding: 15px; /* Match the padding with .selected-question div */
+  border-radius: 8px; /* Match the border-radius with .selected-question div */
+  font-family: 'Courier New', Courier, monospace; /* Use monospaced font for code-like content */
+  white-space: pre-wrap; /* Preserve whitespace and formatting */
+}
+
+
+.editor-and-button-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor {
+  flex-grow: 1;
+  border: none;
+}
+
+.btn {
+  padding: 15px 30px;
+  font-size: 1.1em;
+  background-color: #4a76a8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background-color: #3a5a78;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.output-container {
+  flex: 1;
+  background-color: #e6eef8;
+  padding: 1em;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+}
+
+.output {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+@media (max-width: 768px) {
+  .coding-container {
+    flex-direction: column;
+  }
+
+  .editor-and-button-container {
+    order: -1; /* Bring the editor and button on top on smaller screens */
+  }
+
+  .output-container {
+    /* Adjust height for small screens if necessary */
+  }
+}
 </style>
