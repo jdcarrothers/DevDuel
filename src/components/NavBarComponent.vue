@@ -2,10 +2,10 @@
 <nav class="navbar">
     <div class="logo">DevDuel</div>
     <ul class="nav-links" :class="{ 'nav-active': navOpen }">
-    <li><a href="#">Home</a></li>
-    <li><a href="#">Connect</a></li>
-    <li><a href="#">Account</a></li>
-    <li><a href="#">Contact</a></li>
+    <li><router-link to="/signin">Home</router-link></li>
+    <li><router-link to="/connect">Connect</router-link></li>
+    <li><router-link to="">Account</router-link></li>
+    <li><router-link to="">Contact</router-link></li>
     </ul>
     <div class="burger" @click="toggleNav">
     <div></div>

@@ -5,7 +5,7 @@
       <div v-if="players.length" class="player-list">
         <h2>Players:</h2>
         <div class="player-grid">
-          <div v-for="player in players" :key="player" class="player-box">{{ player }}</div>
+          <div v-for="player in players" :key="player" class="player-box">{{ player.username }}</div>
         </div>
       </div>
       <button class="btn" @click="startQuiz">Start Quiz</button>

@@ -371,9 +371,5 @@ methods: {
   .editor-and-button-container {
     order: -1; /* Bring the editor and button on top on smaller screens */
   }
-
-  .output-container {
-    /* Adjust height for small screens if necessary */
-  }
 }
 </style>
