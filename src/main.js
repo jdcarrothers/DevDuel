@@ -8,6 +8,7 @@ import LobbyAdminPanelComponent from './components/LobbyAdminPanelComponent.vue'
 import LiveQuestionComponent from './components/LiveComponent.vue'
 import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.vue'
 import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
+import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
 
 
 // Define routes
@@ -32,6 +33,11 @@ const routes = [
     name: 'CreateLobby',
     path: '/connect', 
     component: JoinOrCreateLobbyComponent 
+  },
+  { 
+    name: 'AdminQuizOverview',
+    path: '/admin/:lobbyID', 
+    component: AdminQuizOverviewComponent 
   }
 ]
 

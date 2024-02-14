@@ -62,6 +62,15 @@ export default {
     },
     startQuiz() {
       this.socket.emit('startQuiz', this.lobbyCode);
+      this.$router.push({
+            path: `/admin/${this.lobbyCode}`,
+            query: {
+              lobbyCode: this.lobbyCode,
+            },
+            params: {
+              lobbyCode: this.lobbyCode,
+            }
+          }); // Redirect to the quiz page
       alert('Quiz started!');
     },
     pickRandomQuestion() {

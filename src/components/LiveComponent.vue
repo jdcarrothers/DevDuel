@@ -8,6 +8,7 @@
     <div class="editor-and-button-container">
       <codemirror ref="myCodeMirror" v-model="code" :extensions="extensions" class="code-editor"></codemirror>
       <button class="btn" @click="runCodeAndGetSubmissionToken">Submit Code</button>
+      <h1 :style="{ color: '#3a5a78', marginBottom: '10px' }">When you run the code your output will be below</h1>
       <div class="output-container">
         <textarea v-model="codeOutput" class="output"></textarea>
       </div>
@@ -42,10 +43,13 @@ data() {
     Language: "",
     codeOutput: "",
     language_id: null,
+    ActualOutput: "",
+    username: "",
     };
 },
 mounted() {
     this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
+    this.username = this.$route.query.username || this.$route.params.username;
     this.initializeSocket();
     this.loadCorrectQuestion();
   },
@@ -110,7 +114,13 @@ methods: {
 
     this.codeOutput = responseGet.data.stdout || responseGet.data.stderr || "No output";
     this.codeOutput = String(this.codeOutput);
-    if (this.codeOutput.trim() === this.ExpectedOutput.trim()) {
+    if (this.codeOutput.trim() === this.ActualOutput.trim()) {
+      const jsonObject = {
+        lobbyID: this.lobbyCode,
+        username: this.username,
+        };
+        JSON.stringify(jsonObject);
+      this.socket.emit('correctAnswerAlert', jsonObject);
       alert("Correct answer");
     } else {
       alert("Incorrect answer");
@@ -125,8 +135,8 @@ methods: {
         this.socket.once('receivedQuetion', question => {
           this.Question = question.Question;
           this.ExpectedOutput = "Expected output:\n\n" + String(question.ExpectedOutput);
-          
           this.Language = question.Language;
+          this.ActualOutput = question.ActualOutput;
           this.loadRequestProperties();
         });
     },
@@ -260,9 +270,16 @@ methods: {
 </script>
 
 <style scoped>
+.editor-and-button-container h1 {
+  color: #3a5a78; /* Match the color with .selected-question h1 */
+  font-size: 1.4em; /* Match the font size with .selected-question h1 */
+  margin-bottom: 10px; /* Adjust to match .selected-question h1 */
+  font-family: 'Arial', sans-serif;
+
+}
 .coding-container {
   display: flex;
-  height: 80vh;
+  height: 87vh;
   gap: 1em;
 }
 
@@ -279,28 +296,32 @@ methods: {
 }
 
 .problem-container {
-  background-color: #e6eef8; /* Match the background color with .selected-question */
-  padding: 20px; /* Match the padding with .selected-question */
-  border-radius: 8px; /* Match the border-radius with .selected-question */
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Match the box shadow with .selected-question */
-  margin-top: 20px; /* Ensure consistent spacing around the container */
-  text-align: left; /* Align text to the left for readability */
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  flex: 0.3;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Inset shadow for depth */
+  border-radius: 10px;
+  background-color: #f9f9f9;
 }
 
 .problem-container div {
-  background-color: #d0d9e6; /* Match the background color with .selected-question div */
-  padding: 15px; /* Match the padding with .selected-question div */
-  border-radius: 8px; /* Match the border-radius with .selected-question div */
-  font-family: 'Courier New', Courier, monospace; /* Use monospaced font for code-like content */
+  background-color: #d0d9e6;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
   white-space: pre-wrap; /* Preserve whitespace and formatting */
 }
 
 
 .editor-and-button-container {
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
+
 
 .code-editor {
   flex-grow: 1;

@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const Lobby = require('./lobby');
+const Player = require('./player');
 const fs = require('fs');
 const csv = require('csv-parser');
 const csvFilePath = "tasks.csv";
@@ -41,7 +42,8 @@ io.on('connection', (socket) => {
         const lobbyIndex = findLobbyIndex(lobbyID);
 
         if (lobbyIndex !== -1) {
-            lobbies[lobbyIndex].players.push(userID);
+            const newPlayer = new Player(userID);
+            lobbies[lobbyIndex].players.push(newPlayer);
             console.log(`${userID} joined lobby with ID ${lobbyID}`);
             socket.emit('lobbyJoinResponse', true);
         } else {
@@ -109,6 +111,19 @@ io.on('connection', (socket) => {
         console.log(lobby.currentQuestion);
         socket.emit('receivedQuetion', lobby.currentQuestion);
     });
+    socket.on('correctAnswerAlert', (receivedData) => {
+        const lID = receivedData.lobbyID;
+        console.log(lID);
+        const username = receivedData.username;
+        console.log(username)
+        const lobbyIndex = findLobbyIndex(parseInt(lID));
+        const lobby = lobbies[lobbyIndex];
+        const playerIndex = lobby.players.findIndex(player => player.username === username);
+        lobby.players[playerIndex].correct = true;
+        console.log(lobby)
+    });
+
+
     function generateUniqueLobbyCode() {
         let code;
         do {
