@@ -20,12 +20,18 @@
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.23.1",
     "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
     "codemirror": "github:codemirror/basic-setup",
     "core-js": "^3.8.3",
+    "crypto-browserify": "^3.12.0",
     "csv": "^6.3.6",
     "csv-parser": "^3.0.0",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
     "firebase": "^10.8.0",
+    "os-browserify": "^0.3.0",
     "parser": "^0.1.4",
+    "path-browserify": "^1.0.1",
     "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4",
     "vue": "^3.2.13",
@@ -39,7 +45,8 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "stream-browserify": "^3.0.0"
   },
   "eslintConfig": {
     "root": true,

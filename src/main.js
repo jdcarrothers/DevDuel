@@ -9,6 +9,7 @@ import LiveQuestionComponent from './components/LiveComponent.vue'
 import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.vue'
 import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
+import CreateAccountComponent from './components/CreateAccountComponent.vue'
 
 
 // Define routes
@@ -38,6 +39,12 @@ const routes = [
     name: 'AdminQuizOverview',
     path: '/admin/:lobbyID', 
     component: AdminQuizOverviewComponent 
+  },
+  {
+    name: 'Home',
+    path: '/',
+    component: CreateAccountComponent
+  
   }
 ]
 
