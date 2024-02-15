@@ -11,6 +11,7 @@ import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
 import SigninComponent from './components/SigninComponent.vue'
 import RegisterComponent from './components/RegisterComponent.vue'
+import MainMenuComponent from './components/MainMenuComponent.vue'
 
 
 // Define routes
@@ -50,6 +51,10 @@ const routes = [
     name: 'Register',
     path: '/register',
     component: RegisterComponent
+  },{
+    name: 'MainMenu',
+    path: '/home',
+    component: MainMenuComponent
   }
 ]
 

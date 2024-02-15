@@ -25,7 +25,22 @@ app.post('/adduser', async (req, res) => {
             return res.status(400).send({ message: "Username already exists" });
         }
         const docRef = await addDoc(collection(db, "Users"), userData);
+        const userStatsRef = collection(db, `Users/${docRef.id}/Stats`);
+        const userStatsSnapshot = await getDocs(userStatsRef);
+        const initaluserstats ={
+            "totalQuizzes": 0,
+            "totalQuestions": 0,
+            "totalCorrectAnswers": 0,
+            "totalIncorrectAnswers": 0,
+            "totalPoints": 0,
+            "totalTimeSpent": 0
+        }
+        if (userStatsSnapshot.empty) {
+            await addDoc(userStatsRef, { initaluserstats });
+        }
+        
         res.status(200).send({ message: "User added", id: docRef.id });
+
     } catch (e) {
         res.status(500).send({ message: "Error adding user", error: e.message });
     }
@@ -61,6 +76,28 @@ async function checkPasswordMatches(password, username) {
         return false; // Return false if there's an error
     }
 }
+async function getUserStats(username) {
+    try {
+        const querySnapshot = await getDocs(query(collection(db, "Users"), where("username", "==", username)));
+        if (!querySnapshot.empty) {
+
+            const userStatsRef = collection(db, `Users/${querySnapshot.docs[0].id}/Stats`);
+            const userStatsSnapshot = await getDocs(userStatsRef);
+            if (!userStatsSnapshot.empty) {
+                console.log(userStatsSnapshot.docs[0].data());
+                return userStatsSnapshot.docs[0].data();
+               
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    } catch (e) {
+        console.error("Error retrieving user stats: ", e.message);
+        return null;
+    }
+}
 
 app.post('/login', async (req, res) => {
     try {
@@ -74,6 +111,16 @@ app.post('/login', async (req, res) => {
         }
     } catch (e) {
         res.status(500).send({ message: "Error logging in user", error: e.message });
+    }
+});
+
+app.post('/requestStats', async (req, res) => {
+    try {
+        const userData = req.body;
+        const userStats = await getUserStats(userData.username);
+        res.status(200).send({ message: "User stats retrieved", stats: userStats });
+    } catch (e) {
+        res.status(500).send({ message: "Error retrieving user stats", error: e.message });
     }
 });
 
