@@ -2,16 +2,99 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { db } from './firebaseconfig.mjs';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
-
+import { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc } from 'firebase/firestore';
+import axios from 'axios';
 const app = express();
 
 const corsOptions = {
   origin: '*', // or use '*' to allow all origins
 };
 console.log(process.env.FIREBASE_API_KEY)
+console.log(process.env.VUE_APP_OPENAI_API_KEY)
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+app.use(bodyParser.json());DevDuel/firebase.mjs
+
+
+app.post('/evaluate-code', async (req, res) => {
+    try {
+        const { question, language, codeSnippet, expectedOutput } = req.body;
+        const prompt = `
+            You're tasked with evaluating the cleanliness and quality of provided code snippets. Each snippet represents a solution to a given question. Your role is to assess the code's cleanliness on a scale from 0 to 100%, where 100% represents code that is exceptionally clean and well-structured.
+
+            **Question:** ${question}
+            **Language:** ${language}
+            **Code Snippet:**
+            \`\`\`${language}
+            ${codeSnippet}
+            \`\`\`
+            **Expected Output:** ${expectedOutput}
+            **Rating:** <Provide rating as a percentage>
+            **Reasoning:** <Provide reasoning for the rating>
+            <json>
+        `;
+
+        const response = await axios.post('https://api.openai.com/v1/completions', {
+            prompt,
+            max_tokens: 150,
+            stop: ['<json>'],
+            temperature: 0.7,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            model: 'text-davinci-003'
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Assuming OpenAI's response includes a line for rating and a line for reasoning
+        const lines = response.data.choices[0].text.trim().split('\n');
+        const codeRatingLine = lines.find(line => line.startsWith('**Rating:**'));
+        const reasonLine = lines.find(line => line.startsWith('**Reasoning:**'));
+
+        const codeRating = codeRatingLine ? codeRatingLine.split('**Rating:**')[1].trim() : 'Unknown';
+        const reason = reasonLine ? reasonLine.split('**Reasoning:**')[1].trim() : 'No reasoning provided';
+
+        res.json({ codeRating, reason });
+    } catch (error) {
+        console.error('Error in /evaluate-code:', error);
+        res.status(500).send(error.toString());
+    }
+});
+
+app.post('/updateDB', async (req, res) => {
+    try {
+        const{username , newCodeRating} = req.body;
+        const userRef = doc(db, "Users", username);
+        const userDoc = await getDoc(userRef);
+        if (!userDoc.exists) {
+            return res.status(404).send({ message: "User not found" });
+        } 
+        const userData = userDoc.data();
+        let {codeRating, gamesPlayed} = userData.Stats;
+        if (codeRating === 0 || gamesPlayed === 0) {
+            codeRating = newRating;
+            gamesPlayed = 1;
+        }
+        else 
+        {
+            gamesPlayed += 1;
+            codeRating = codeRating + newCodeRating;
+            codeRating = codeRating / gamesPlayed;
+        }
+        await userRef.update({
+            'stats.codeRating': codeRating,
+            'stats.gamesPlayed': gamesPlayed
+        });
+        
+        res.status(200).send({ message: "User stats updated", codeRating, gamesPlayed });
+    } catch (e) {
+        res.status(500).send({ message: "Error updating user code quality", error: e.message });
+    }
+}
+);
 
 app.post('/adduser', async (req, res) => {
     try {
@@ -28,9 +111,9 @@ app.post('/adduser', async (req, res) => {
         const userStatsRef = collection(db, `Users/${docRef.id}/Stats`);
         const userStatsSnapshot = await getDocs(userStatsRef);
         const initaluserstats ={
-            "totalQuizzes": 0,
-            "totalQuestions": 0,
-            "totalCorrectAnswers": 0,
+            "totalQuizWon": 0,
+            "codeQuality": 0.0,
+            "": 0,
             "totalIncorrectAnswers": 0,
             "totalPoints": 0,
             "totalTimeSpent": 0

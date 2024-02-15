@@ -29,7 +29,7 @@ export default {
     methods: {
         async populateStatistics() {
             try {
-                const response = await axios.post('http://172.21.252.211:2000/requestStats', this.user);
+                const response = await axios.post('http://192.168.0.24:2000/requestStats', this.user);
                 console.log(response.data.stats);
             } catch (error) {
                 alert(error.response.data.message)

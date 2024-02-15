@@ -27,6 +27,7 @@ import { rust } from "@codemirror/lang-rust";
 import socketio from 'socket.io-client';
 import axios from 'axios';
 
+
 export default {
 name: 'LiveComponent',
 components: {
@@ -54,6 +55,23 @@ mounted() {
     this.loadCorrectQuestion();
   },
 methods: {
+      async evaluateCodeCleanliness() {
+        try {
+            const response = await axios.post('http://192.168.0.24:2000/evaluate-code', {
+                question: this.Question,
+                language: this.Language,
+                codeSnippet: this.code,
+                expectedOutput: this.ExpectedOutput
+            });
+
+            await axios.post('http://192.168.0.24:2000/updateDB', {
+                username: localStorage.getItem('username'),
+                newCodeRating: response.data.codeRating
+            });
+        } catch (error) {
+            console.error('Error evaluating code cleanliness:', error);
+        }
+    },
     initializeSocket() {
         this.socket = socketio(process.env.VUE_APP_SERVER_URL);
         this.socket.on('connect', () => {
@@ -121,6 +139,7 @@ methods: {
         };
         JSON.stringify(jsonObject);
       this.socket.emit('correctAnswerAlert', jsonObject);
+      this.evaulateCodeCleanliness()
       alert("Correct answer");
     } else {
       alert("Incorrect answer");

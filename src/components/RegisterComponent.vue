@@ -34,7 +34,7 @@ export default {
   methods: {
     async addUser() {
       try {
-        const response = await axios.post('http://172.21.252.211:2000/adduser', this.user);
+        const response = await axios.post('http://192.168.0.24:2000/adduser', this.user);
         alert('User added successfully!');
         console.log(response);
         console.log(this.user);
