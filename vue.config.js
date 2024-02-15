@@ -1,8 +1,14 @@
 const { defineConfig } = require('@vue/cli-service');
-const webpack = require('webpack');
 
 module.exports = defineConfig({
-  transpileDependencies: true,
+  transpileDependencies: [
+    'path-browserify',
+    'crypto-browserify',
+    'stream-browserify',
+    'browserify-zlib',
+    'querystring-es3',
+    'stream-http'
+  ],
   devServer: {
     proxy: {
       '/api': {
@@ -11,6 +17,5 @@ module.exports = defineConfig({
         pathRewrite: { '^/api': '' }
       }
     }
-  },
   }
-);
+});

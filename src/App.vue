@@ -13,6 +13,12 @@ export default {
     NavBarComponent
   },
   mounted() {
+    //check if there is a local storage token and if it is valid then redirect to the connect page else redirect to the signin page
+    if (localStorage.getItem('token')) {
+      this.$router.push('/connect');
+    } else {
+      this.$router.push('/register');
+    } 
     },
   methods: {
     },

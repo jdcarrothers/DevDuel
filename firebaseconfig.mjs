@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth'; // Import Firebase Authentication
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -24,6 +23,5 @@ const firebaseConfig = {
 // };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app); // Get the authentication instance
 
-export { db, auth }; // Export Firestore and Authentication
+export { db }; // Export Firestore and Authentication
