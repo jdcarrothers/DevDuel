@@ -47,7 +47,7 @@
     },
     goToHome() {
         
-        this.$router.push('/connect');  
+        this.$router.push('/home');  
     },
     goToRegister() {
 

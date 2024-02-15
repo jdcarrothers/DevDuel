@@ -17,12 +17,9 @@ export default {
         return {
             user: {
                 username: '',
-                totalCorrectAnswers: 0,
-                totalIncorrectAnswers: 0,
-                totalPoints: 0,
-                totalQuestions: 0,
-                totalQuizzes: 0,
-                totalTimeSpent: 0
+                codeRating: 0,
+                gamesPlayed: 0,
+                Wins: 0,
             },
         }
     },
@@ -31,8 +28,13 @@ export default {
             try {
                 const response = await axios.post('http://192.168.0.24:2000/requestStats', this.user);
                 console.log(response.data.stats);
+                response.data.stats.forEach(stat => {
+                    this.user.codeRating = stat.codeRating;
+                    this.user.gamesPlayed = stat.gamesPlayed;
+                    this.user.Wins = stat.Wins;
+                });
             } catch (error) {
-                alert(error.response.data.message)
+                console.log("no stats on your screen? no problem nothing to see here move along now... nothing to see here... move along... move along... its cuz your not logged in will fix later");
             }
         },
     }

@@ -6,8 +6,8 @@
       <label for="lobbyID" class="input-label">Game ID</label>
       <input id="lobbyID" v-model="joinCredLobbyID" type="text" placeholder="Enter Lobby ID" class="input-field">
 
-      <label for="username" class="input-label">Username</label>
-      <input id="username" v-model="joinCredUsername" type="text" placeholder="Enter Your Name" class="input-field">
+      <label for="username" class="input-label">Nickname</label>
+      <input id="username" v-model="joinCredUsername" type="text" placeholder="Enter Your Nickname" class="input-field">
 
       <button class="btn" @click="connectToGame">Connect</button>
     </div>

@@ -111,17 +111,13 @@ app.post('/adduser', async (req, res) => {
         const userStatsRef = collection(db, `Users/${docRef.id}/Stats`);
         const userStatsSnapshot = await getDocs(userStatsRef);
         const initaluserstats ={
-            "totalQuizWon": 0,
-            "codeQuality": 0.0,
-            "": 0,
-            "totalIncorrectAnswers": 0,
-            "totalPoints": 0,
-            "totalTimeSpent": 0
+            "codeRating": 0.0,
+            "gamesPlayed": 0,
+            "Wins": 0,
         }
         if (userStatsSnapshot.empty) {
             await addDoc(userStatsRef, { initaluserstats });
         }
-        
         res.status(200).send({ message: "User added", id: docRef.id });
 
     } catch (e) {

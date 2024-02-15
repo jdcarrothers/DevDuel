@@ -45,7 +45,7 @@ export default {
       }
     },
     goToHome() {
-      this.$router.push('/connect');
+      this.$router.push('/home');
     },
     goToLogin() {
       this.$router.push('/signin');
