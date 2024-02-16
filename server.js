@@ -5,6 +5,7 @@ const Lobby = require('./lobby');
 const Player = require('./player');
 const fs = require('fs');
 const csv = require('csv-parser');
+const { json } = require('body-parser');
 const csvFilePath = "tasks.csv";
 const app = express();
 const server = http.createServer(app);
@@ -111,6 +112,7 @@ io.on('connection', (socket) => {
         console.log(lobby.currentQuestion);
         socket.emit('receivedQuetion', lobby.currentQuestion);
     });
+
     socket.on('correctAnswerAlert', (receivedData) => {
         const lID = receivedData.lobbyID;
         console.log(lID);
@@ -119,9 +121,33 @@ io.on('connection', (socket) => {
         const lobbyIndex = findLobbyIndex(parseInt(lID));
         const lobby = lobbies[lobbyIndex];
         const playerIndex = lobby.players.findIndex(player => player.username === username);
+        const player = lobby.players[playerIndex]; 
         lobby.players[playerIndex].correct = true;
         console.log(lobby)
+        if(lobby.leaderboardPlayers.Length == 3)
+        {
+            console.log("leaderboard is full");
+        }
+        else{
+            lobby.leaderboardPlayers.push(player);
+        }
     });
+
+    socket.on('endGame', (lID) => {
+        const lobbyIndex = findLobbyIndex(parseInt(lID));
+        if (lobbyIndex !== -1) {
+            const lobby = lobbies[lobbyIndex];
+            const array = lobby.leaderboardPlayers;
+            lobbies.splice(lobbyIndex);
+            socket.emit('gameEnded', array);
+        }
+        else {
+            console.error(`Error: Lobby with ID ${lID} not found.`);
+            socket.emit('gameEnded', false);
+        }
+    }
+    );
+
 
 
     function generateUniqueLobbyCode() {

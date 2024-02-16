@@ -35,7 +35,7 @@ methods: {
 display: flex;
 justify-content: space-between;
 align-items: center;
-background-color: #45524b;
+background-color: #193657;
 color: white;
 padding: 1rem;
 font-family: 'Arial', sans-serif;
@@ -60,6 +60,7 @@ transition: transform 0.3s ease-in;
 
 .nav-links li {
 padding: 0 20px;
+font-weight: 100s;
 }
 
 .nav-links a {

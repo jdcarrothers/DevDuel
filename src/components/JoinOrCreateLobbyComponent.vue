@@ -37,6 +37,7 @@ export default {
     }
   },
   mounted() {
+    console.log(process.env.VUE_APP_SERVER_URL);
     this.socket = socketio(process.env.VUE_APP_SERVER_URL);
     this.socket.on('connect', () => {
       console.log('Connected to server');

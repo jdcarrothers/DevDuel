@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <button class="btn" @click="endGame">End Game</button>
   </div>
 </template>
 
@@ -48,7 +49,12 @@ export default {
         this.socket.once('recentPlayers', players => {
         this.players = players;
         });
-      }, 1500);
+      }, 1000);
+    },
+    endGame() {
+      this.socket.emit('endGame', this.lobbyCode);
+      this.$router.push({ path: `/end/${this.lobbyCode}`,
+      query: { lobbyCode: this.lobbyCode } });
     },
   },
 };
@@ -61,6 +67,19 @@ export default {
   justify-content: space-between;
   align-items: stretch;
   margin: 0 20px;
+}
+.btn {
+  background-color: #2f5683;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  margin-top: 20px;
 }
 
 .lobby-container {

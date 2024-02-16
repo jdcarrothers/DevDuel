@@ -12,7 +12,7 @@ const corsOptions = {
 console.log(process.env.FIREBASE_API_KEY)
 console.log(process.env.VUE_APP_OPENAI_API_KEY)
 app.use(cors(corsOptions));
-app.use(bodyParser.json());DevDuel/firebase.mjs
+app.use(bodyParser.json());
 
 
 app.post('/evaluate-code', async (req, res) => {

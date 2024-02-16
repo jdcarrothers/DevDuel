@@ -13,7 +13,6 @@ import SigninComponent from './components/SigninComponent.vue'
 import RegisterComponent from './components/RegisterComponent.vue'
 import MainMenuComponent from './components/MainMenuComponent.vue'
 
-
 // Define routes
 const routes = [
   { 
