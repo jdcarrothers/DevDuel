@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "concurrently \"vue-cli-service build\" \"node server.js\" \"node firebase.mjs\"",
+    "build": "concurrently \"vue-cli-service build\"",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
