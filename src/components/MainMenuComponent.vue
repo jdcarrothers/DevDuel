@@ -26,7 +26,7 @@ export default {
     methods: {
         async populateStatistics() {
             try {
-                const response = await axios.post('https://harmonious-marshmallow-62274e.netlify.app:2000/requestStats', this.user);
+                const response = await axios.post('http://172.21.252.211:2000/requestStats', this.user);
                 console.log(response.data.stats);
                 response.data.stats.forEach(stat => {
                     this.user.codeRating = stat.codeRating;

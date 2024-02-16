@@ -32,7 +32,7 @@
     methods: {
         async signIn() {
         try {
-            const response = await axios.post('https://harmonious-marshmallow-62274e.netlify.app:2000/login', this.user);
+            const response = await axios.post('http://172.21.252.211:2000/login', this.user);
             if (response.status === 200) {
                 alert(response.data.message);
                 localStorage.setItem('username', this.user.username);
