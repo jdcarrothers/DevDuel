@@ -1,8 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-const Lobby = require('./lobby');
-const Player = require('./player');
+const Lobby = require('../lobby');
+const Player = require('../player');
 const fs = require('fs');
 const csv = require('csv-parser');
 const { json } = require('body-parser');

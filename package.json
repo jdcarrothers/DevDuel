@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "concurrently \"node server.js\" \"node firebase.mjs\" \"vue-cli-service build\"",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "parser": "^0.1.4",
     "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4",
+    "vercel": "^33.5.1",
     "vue": "^3.2.13",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.2.5"
