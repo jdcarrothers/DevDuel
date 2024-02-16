@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { db } from '../firebaseconfig.mjs';
+import { db } from './firebaseconfig.mjs';
 import { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 const app = express();

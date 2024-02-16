@@ -15,7 +15,6 @@
         </div>
       </div>
     </div>
-    <button class="btn" @click="endGame">End Game</button>
   </div>
 </template>
 
