@@ -57,14 +57,14 @@ mounted() {
 methods: {
       async evaluateCodeCleanliness() {
         try {
-            const response = await axios.post('http://172.21.252.211:2000/evaluate-code', {
+            const response = await axios.post('https://dev-duel-alpha.vercel.app:2000/evaluate-code', {
                 question: this.Question,
                 language: this.Language,
                 codeSnippet: this.code,
                 expectedOutput: this.ExpectedOutput
             });
 
-            await axios.post('http://172.21.252.211:2000/updateDB', {
+            await axios.post('https://dev-duel-alpha.vercel.app:2000/updateDB', {
                 username: localStorage.getItem('username'),
                 newCodeRating: response.data.codeRating
             });

@@ -12,7 +12,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://dev-duel-alpha.vercel.app',
         changeOrigin: true,
         pathRewrite: { '^/api': '' }
       }
