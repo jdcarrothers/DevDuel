@@ -1,63 +1,84 @@
 <template>
   <div class="container">
     <h2>Register</h2>
-      <div>
-        <label for="username" class="input-label">Username</label>
-        <input v-model="user.username" type="text" id="username" placeholder="Enter Username" class="input-field" >
-      </div>
-      <div>
-        <label for="email" class="input-label">Email</label>
-        <input v-model="user.email" type="email" id="email" placeholder="Enter Email" class="input-field" >
-      </div>
-      <div>
-        <label for="password" class="input-label">Password</label>
-        <input v-model="user.password" type="password" id="password" placeholder="Enter Password" class="input-field" >
-      </div>
-      <button @click="addUser" class="btn">Submit</button>
-      <button type="button" @click="goToHome" class="btn">Bypass</button>
-      <p class="movement" @click="goToLogin">Click here to sign in</p>
+    <div>
+      <label for="username" class="input-label">Username</label>
+      <input
+        v-model="user.username"
+        type="text"
+        id="username"
+        placeholder="Enter Username"
+        class="input-field"
+      />
+    </div>
+    <div>
+      <label for="email" class="input-label">Email</label>
+      <input
+        v-model="user.email"
+        type="email"
+        id="email"
+        placeholder="Enter Email"
+        class="input-field"
+      />
+    </div>
+    <div>
+      <label for="password" class="input-label">Password</label>
+      <input
+        v-model="user.password"
+        type="password"
+        id="password"
+        placeholder="Enter Password"
+        class="input-field"
+      />
+    </div>
+    <button @click="addUser" class="btn">Submit</button>
+    <button type="button" @click="goToHome" class="btn">Bypass</button>
+    <p class="movement" @click="goToLogin">Click here to sign in</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
       user: {
-        username: '',
-        password: '',
-        email: ''
+        username: "",
+        password: "",
+        email: "",
       },
     };
   },
   methods: {
     async addUser() {
       try {
-        const response = await axios.post('http://172.21.252.211:2000/adduser', this.user);
-        alert('User added successfully!');
+        const response = await axios.post(
+          `${process.env.VUE_APP_SERVER_IP}/adduser`,
+          this.user
+        );
+        alert("User added successfully!");
         console.log(response);
         console.log(this.user);
-        localStorage.setItem('username', this.user.username);
+        localStorage.setItem("username", this.user.username);
         this.goToHome();
       } catch (error) {
-        alert(error.response.data.message)
+        alert(error.response.data.message);
       }
     },
     goToHome() {
-      this.$router.push('/home');
+      this.$router.push("/home");
     },
     goToLogin() {
-      this.$router.push('/signin');
-    }
-  }
+      this.$router.push("/signin");
+    },
+  },
 };
 </script>
 
 <style scoped>
 .container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   max-width: 600px;
   margin: 40px auto;
@@ -93,7 +114,7 @@ h2 {
   border: 2px solid #d0d9e6;
   border-radius: 4px;
   width: 80%;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .btn {
@@ -115,13 +136,13 @@ h2 {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-
 @media (max-width: 768px) {
   .container {
     padding: 20px 10px;
   }
 
-  .input-field, .btn {
+  .input-field,
+  .btn {
     width: 90%;
   }
 }

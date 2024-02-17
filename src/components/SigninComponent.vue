@@ -1,132 +1,147 @@
 <template>
-    <div class="container">
-      <h2>Sign in</h2>
-        <div>
-          <label for="username" class="input-label">Username</label>
-          <input v-model="user.username" type="text" id="username" placeholder="Enter Username" class="input-field" >
-        </div>
-        <div>
-        </div>
-        <div>
-          <label for="password" class="input-label">Password</label>
-          <input v-model="user.password" type="password" id="password" placeholder="Enter Password" class="input-field" >
-        </div>
-        <button @click="signIn" class="btn">Submit</button>
-        <button type="button" @click="goToHome" class="btn">Bypass</button>
-        <p class="movement" @click="goToRegister">Click here to register</p>
+  <div class="container">
+    <h2>Sign in</h2>
+    <div>
+      <label for="username" class="input-label">Username</label>
+      <input
+        v-model="user.username"
+        type="text"
+        id="username"
+        placeholder="Enter Username"
+        class="input-field"
+      />
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        user: {
-          username: '',
-          password: '',
-        },
-      };
-    },
-    methods: {
-        async signIn() {
-        try {
-            const response = await axios.post('http://172.21.252.211:2000/login', this.user);
-            if (response.status === 200) {
-                alert(response.data.message);
-                localStorage.setItem('username', this.user.username);
-                this.goToHome();
-            } else {
-                alert(response.data.message);
-                this.$router.push("/register")
-            }
-        } catch (error) {
-            alert(error.response && error.response.data ? error.response.data.message : "Login failed");
+    <div></div>
+    <div>
+      <label for="password" class="input-label">Password</label>
+      <input
+        v-model="user.password"
+        type="password"
+        id="password"
+        placeholder="Enter Password"
+        class="input-field"
+      />
+    </div>
+    <button @click="signIn" class="btn">Submit</button>
+    <button type="button" @click="goToHome" class="btn">Bypass</button>
+    <p class="movement" @click="goToRegister">Click here to register</p>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      user: {
+        username: "",
+        password: "",
+      },
+    };
+  },
+  methods: {
+    async signIn() {
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_SERVER_IP}/login`,
+          this.user
+        );
+        if (response.status === 200) {
+          alert(response.data.message);
+          localStorage.setItem("username", this.user.username);
+          this.goToHome();
+        } else {
+          alert(response.data.message);
+          this.$router.push("/register");
         }
+      } catch (error) {
+        alert(
+          error.response && error.response.data
+            ? error.response.data.message
+            : "Login failed"
+        );
+      }
     },
     goToHome() {
-        
-        this.$router.push('/home');  
+      this.$router.push("/home");
     },
     goToRegister() {
-
-        this.$router.push('/register');
-    }
-    }
-  };
+      this.$router.push("/register");
+    },
+  },
+};
 </script>
-  
-  <style scoped>
+
+<style scoped>
+.container {
+  text-align: center;
+  font-family: "Arial", sans-serif;
+  color: #333;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+h2 {
+  color: #4a76a8;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+.movement {
+  padding-top: 10px;
+  color: #4a76a8;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 1.1em;
+}
+
+.input-label {
+  display: block;
+  color: #4a76a8;
+  margin-bottom: 5px;
+  font-size: 1em;
+}
+
+.input-field {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid #d0d9e6;
+  border-radius: 4px;
+  width: 80%;
+  font-family: "Arial", sans-serif;
+}
+
+.btn {
+  background-color: #2f5683;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  margin-top: 20px;
+}
+
+.btn:hover {
+  background-color: #3a5a78;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
   .container {
-    text-align: center;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    background-color: #f9f9f9;
+    padding: 20px 10px;
   }
-  
-  h2 {
-    color: #4a76a8;
-    font-size: 2em;
-    margin-bottom: 20px;
-  }
-  .movement {
-    padding-top: 10px;
-    color: #4a76a8;
-    cursor: pointer;
-    margin-top: 20px;
-    font-size: 1.1em;
-  }
-  
-  .input-label {
-    display: block;
-    color: #4a76a8;
-    margin-bottom: 5px;
-    font-size: 1em;
-  }
-  
-  .input-field {
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 2px solid #d0d9e6;
-    border-radius: 4px;
-    width: 80%;
-    font-family: 'Arial', sans-serif;
-  }
-  
+
+  .input-field,
   .btn {
-    background-color: #2f5683;
-    color: white;
-    padding: 15px 30px;
-    font-size: 1.1em;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    margin-top: 20px;
+    width: 90%;
   }
-  
-  .btn:hover {
-    background-color: #3a5a78;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
-  
-  
-  @media (max-width: 768px) {
-    .container {
-      padding: 20px 10px;
-    }
-  
-    .input-field, .btn {
-      width: 90%;
-    }
-  }
-  </style>
-  
+}
+</style>
