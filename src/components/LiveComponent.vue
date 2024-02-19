@@ -79,14 +79,25 @@ export default {
             expectedOutput: this.ExpectedOutput,
           }
         );
-        await axios.post(`${process.env.VUE_APP_SERVER_IP}/updateDB`, {
-          username: localStorage.getItem("username"),
-          newCodeRating: response.data.codeRating,
+        const codeR = response.data.Rating;
+        const codeReason = response.data.Reasoning;
+        alert(`Code cleanliness rating: ${codeR}` + "\n" + codeReason);
+        this.$router.push({
+          path: `/endUser/${this.lobbyCode}`,
+          query: { lobbyCode: this.lobbyCode },
         });
       } catch (error) {
         console.error("Error evaluating code cleanliness:", error);
       }
     },
+    //     await axios.post(`${process.env.VUE_APP_SERVER_IP}/updateDB`, {
+    //       username: localStorage.getItem("username"),
+    //       newCodeRating: response.data.codeRating,
+    //     });
+    //   } catch (error) {
+    //     console.error("Error evaluating code cleanliness:", error);
+    //   }
+    // },
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
       this.socket.on("connect", () => {

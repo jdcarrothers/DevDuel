@@ -8,6 +8,8 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
+const { OpenAI } = require("openai");
+require('dotenv').config();
 
 
 let usedLobbyCodes = [];
@@ -32,49 +34,36 @@ async function initializeApp() {
   const app = express();
   app.use(cors(corsOptions));
   app.use(bodyParser.json());
-
+  const openai = new OpenAI({apiKey: `${process.env.VUE_APP_OPENAI_KEY}`});
   app.post('/evaluate-code', async (req, res) => {
     try {
         const { question, language, codeSnippet, expectedOutput } = req.body;
-        const prompt = `
-            You're tasked with evaluating the cleanliness and quality of provided code snippets. Each snippet represents a solution to a given question. Your role is to assess the code's cleanliness on a scale from 0 to 100%, where 100% represents code that is exceptionally clean and well-structured.
-
-            **Question:** ${question}
-            **Language:** ${language}
-            **Code Snippet:**
-            \`\`\`${language}
-            ${codeSnippet}
-            \`\`\`
-            **Expected Output:** ${expectedOutput}
-            **Rating:** <Provide rating as a percentage>
-            **Reasoning:** <Provide reasoning for the rating>
-            <json>
-        `;
-
-        const response = await axios.post('https://api.openai.com/v1/completions', {
-            prompt,
-            max_tokens: 150,
-            stop: ['<json>'],
-            temperature: 0.7,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-            model: 'text-davinci-003'
-        }, {
-            headers: {
-                'Authorization': `Bearer ${process.env.VUE_APP_OPENAI_KEY}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const lines = response.data.choices[0].text.trim().split('\n');
-        const codeRatingLine = lines.find(line => line.startsWith('**Rating:**'));
-        const reasonLine = lines.find(line => line.startsWith('**Reasoning:**'));
-
-        const codeRating = codeRatingLine ? codeRatingLine.split('**Rating:**')[1].trim() : 'Unknown';
-        const reason = reasonLine ? reasonLine.split('**Reasoning:**')[1].trim() : 'No reasoning provided';
-
-        res.json({ codeRating, reason });
+        aiModelAsk();
+        async function aiModelAsk() {
+        
+            const completion = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [{
+                  role: "system",
+                  content: `You are tasked with evaluating the cleanliness and quality of provided code snippets. Each snippet offers a solution to a specified question. Your evaluation should focus on the code's cleanliness and overall quality, rated on a scale from 0 to 100%, where 100% signifies exceptionally clean and well-structured code. Your response must be concise and in a parsable JSON format, if the code doesnt answer the question correctly and simply hard codes the expected output, then the rating will be a 0. You must include only a rating and reasoning for that rating.
+          
+                  **Question:** ${question}
+                  **Language:** ${language}
+                  **Code Snippet:**
+                  ${codeSnippet}
+                  \`\`\`
+                  **Expected Output:** ${expectedOutput}
+                  
+                  Please provide your assessment in the following JSON structure:
+                  {
+                    "Rating": "<Insert rating as a interager, 1 to 100>",
+                    "Reasoning": "<Insert concise reasoning for the given rating>"
+                  }`
+                }]
+              });
+            console.log(JSON.parse(completion.choices[0].message.content));
+            res.status(200).send(JSON.parse(completion.choices[0].message.content));
+          }
     } catch (error) {
         console.error('Error in /evaluate-code:', error);
         res.status(500).send(error.toString());
@@ -406,3 +395,4 @@ app.post('/requestStats', async (req, res) => {
 }
 
 initializeApp().catch(error => console.error('Error initializing app:', error));
+

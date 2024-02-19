@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <button class="btn" @click="endGame">End Game</button>
   </div>
 </template>
 
@@ -134,6 +135,8 @@ export default {
   font-size: 1.1em;
   border: none;
   border-radius: 8px;
+  max-width: 80px;
+  max-height: 40px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

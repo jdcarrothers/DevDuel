@@ -1,5 +1,7 @@
 Question,Language,ExpectedOutput,ActualOutput
 Write a python script to find the factorial of a number using recursion.,Python,"<br>120<br>","120"
-Write a python script to print the 5 times tables up to 12.,Python,"<br>5<br>10<br>15<br>20<br>25<br>30<br>35<br>40<br>45<br>50<br>55<br>60",
 Write a python script to find the sum of the first 10 natural numbers.,Python,"<br>55<br>","55"
-testing,JavaScript,"<br>hello<br>","hello"
+Write a Python function to reverse this string "This is a string" using recursion.,Python,"<br>gnirts a si sihT<br>","gnirts a si sihT"
+Write a Python script to check if 17 is a prime number.,Python,"<br>True<br>","True"
+Write a Python function to check whether 16 is perfect square.,Python,"<br>True<br>","True"
+"Given two sorted lists list1 = [1, 3, 5,] and list2 = [2, 4, 6,]",Python,"<br>[1, 2, 3, 4, 5, 6]<br>","[1, 2, 3, 4, 5, 6]"
