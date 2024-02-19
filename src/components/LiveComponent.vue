@@ -84,7 +84,7 @@ export default {
         alert(`Code cleanliness rating: ${codeR}` + "\n" + codeReason);
         this.$router.push({
           path: `/endUser/${this.lobbyCode}`,
-          query: { lobbyCode: this.lobbyCode },
+          query: { username: this.username, codeRating: codeR, codeReasoning: codeReason},
         });
       } catch (error) {
         console.error("Error evaluating code cleanliness:", error);

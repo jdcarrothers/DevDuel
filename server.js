@@ -328,7 +328,7 @@ app.post('/requestStats', async (req, res) => {
             console.log("leaderboard is full");
         }
         else{
-            lobby.leaderboardPlayers.push(player);
+            lobby.leaderboardPlayers.push(player.username);
         }
     });
 
@@ -338,6 +338,7 @@ app.post('/requestStats', async (req, res) => {
             const lobby = lobbies[lobbyIndex];
             const array = lobby.leaderboardPlayers;
             lobbies.splice(lobbyIndex);
+            console.log(`Game ended in lobby ${lID}`);
             socket.emit('gameEnded', array);
         }
         else {

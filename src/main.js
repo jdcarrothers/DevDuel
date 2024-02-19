@@ -12,7 +12,8 @@ import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.
 import SigninComponent from './components/SigninComponent.vue'
 import RegisterComponent from './components/RegisterComponent.vue'
 import MainMenuComponent from './components/MainMenuComponent.vue'
-
+import HostFinishComponent from './components/HostFinishComponent.vue'
+import UserFinishComponent from './components/UserFinishComponent.vue'
 // Define routes
 const routes = [
   { 
@@ -50,10 +51,23 @@ const routes = [
     name: 'Register',
     path: '/register',
     component: RegisterComponent
-  },{
+  },
+  {
     name: 'MainMenu',
     path: '/home',
     component: MainMenuComponent
+  }
+  ,
+  {
+    name: 'HostFinish',
+    path: '/end/:lobbyID',
+    component: HostFinishComponent
+  }
+  ,
+  {
+    name: 'UserFinish',
+    path: '/endUser/:lobbyID',
+    component: UserFinishComponent
   }
 ]
 

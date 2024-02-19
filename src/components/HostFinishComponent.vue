@@ -1,13 +1,19 @@
 <template>
-  <div>
-    {{ this.lobbyCode }}
-    {{ this.first }}
-    {{ this.second }}
-    {{ this.third }}
-  </div>
+    <div class="leaderboard-container">
+        <h2 class="leaderboard-title">You ended the game!</h2>
+        <div class="leaderboard">
+            <h3 class="leaderboard-header">Leaderboard</h3>
+            <ul class="leaderboard-list">
+                <li><strong>1st:</strong> {{ this.first }}</li>
+                <li><strong>2nd:</strong> {{ this.second }}</li>
+                <li><strong>3rd:</strong> {{ this.third }}</li>
+            </ul>
+        </div>
+    </div>
 </template>
 
 <script>
+import socketio from "socket.io-client";
 export default {
     name: 'HostFinishComponent',
     data() {
@@ -43,5 +49,40 @@ export default {
 </script>
 
 <style scoped>
-/* Your style code here */
+.leaderboard-container {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  margin: 20px auto; /* Center the container */
+  max-width: 500px; /* Ensure the container doesn't stretch too wide */
+}
+
+.leaderboard-title {
+  color: #3a5a78;
+  margin-bottom: 20px;
+}
+
+.leaderboard-header {
+  color: #4a76a8;
+  margin-bottom: 10px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+}
+
+.leaderboard-list li {
+  background-color: #e6eef8;
+  color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Courier New', Courier, monospace;
+}
 </style>

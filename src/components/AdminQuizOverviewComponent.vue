@@ -52,7 +52,6 @@ export default {
       }, 1000);
     },
     endGame() {
-      this.socket.emit('endGame', this.lobbyCode);
       this.$router.push({ path: `/end/${this.lobbyCode}`,
       query: { lobbyCode: this.lobbyCode } });
     },
