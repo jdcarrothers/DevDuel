@@ -79,9 +79,21 @@ export default {
             expectedOutput: this.ExpectedOutput,
           }
         );
-        const codeR = response.data.Rating;
-        const codeReason = response.data.Reasoning;
-        alert(`Code cleanliness rating: ${codeR}` + "\n" + codeReason);
+        let codeR = response.data.Rating;
+        let codeReason = response.data.Reasoning;
+        codeR = Math.round(codeR);
+        codeR = parseInt(codeR);
+        codeReason = String(codeReason);
+
+
+        const update = await axios.post(
+          `${process.env.VUE_APP_SERVER_IP}/updateDB`,
+          {
+            username: this.username,
+            newCodeRating: codeR,
+          },
+        );
+        console.log(update.data);
         this.$router.push({
           path: `/endUser/${this.lobbyCode}`,
           query: { username: this.username, codeRating: codeR, codeReasoning: codeReason},
@@ -90,14 +102,6 @@ export default {
         console.error("Error evaluating code cleanliness:", error);
       }
     },
-    //     await axios.post(`${process.env.VUE_APP_SERVER_IP}/updateDB`, {
-    //       username: localStorage.getItem("username"),
-    //       newCodeRating: response.data.codeRating,
-    //     });
-    //   } catch (error) {
-    //     console.error("Error evaluating code cleanliness:", error);
-    //   }
-    // },
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
       this.socket.on("connect", () => {

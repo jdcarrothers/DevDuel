@@ -56,7 +56,6 @@ export default {
           `${process.env.VUE_APP_SERVER_IP}/adduser`,
           this.user
         );
-        alert("User added successfully!");
         console.log(response);
         console.log(this.user);
         localStorage.setItem("username", this.user.username);

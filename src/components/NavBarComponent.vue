@@ -2,7 +2,7 @@
 <nav class="navbar">
     <div class="logo">DevDuel</div>
     <ul class="nav-links" :class="{ 'nav-active': navOpen }">
-    <li><router-link to="/signin">Home</router-link></li>
+    <li><router-link to="/home">Home</router-link></li>
     <li><router-link to="/connect">Connect</router-link></li>
     <li><router-link to="">Account</router-link></li>
     <li><router-link to="">Contact</router-link></li>
@@ -32,84 +32,97 @@ methods: {
 
 <style scoped>
 .navbar {
-display: flex;
-justify-content: space-between;
-align-items: center;
-background-color: #193657;
-color: white;
-padding: 1rem;
-font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2f5683; /* Matching the button color for consistency */
+  color: white;
+  padding: 1rem;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
 }
 
 .logo {
-  font-size: 2rem; /* Increase size */
+  font-size: 2rem;
   font-weight: bold;
   color: #f9f9f9;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow for depth */
   transition: transform 0.3s ease; /* Smooth transition on hover */
 }
+
 .logo:hover {
   cursor: pointer;
-  transform: scale(1.1); /* Slightly enlarge on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover for interactivity */
 }
+
 .nav-links {
-list-style: none;
-display: flex;
-transition: transform 0.3s ease-in;
+  list-style: none;
+  display: flex;
+  transition: transform 0.3s ease-in;
 }
 
 .nav-links li {
-padding: 0 20px;
-font-weight: 100s;
+  padding: 0 20px;
 }
 
 .nav-links a {
-color: white;
-text-decoration: none;
-transition: color 0.3s ease;
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-color: #4a76a8;
+  color: #e6eef8; /* Lighter blue shade for hover state, matching selected question background */
 }
 
 .burger {
-display: none;
-cursor: pointer;
+  display: none;
+  cursor: pointer;
 }
 
 .burger div {
-width: 25px;
-height: 3px;
-background-color: white;
-margin: 5px;
-transition: all 0.3s ease;
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 5px;
+  transition: all 0.3s ease;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-.nav-links {
+  .nav-links {
     flex-direction: column;
     width: 100%;
     position: absolute;
     right: 0;
     top: 8vh;
-    background-color: #45524b;
+    background-color: #3a5a78; /* Slightly darker shade for mobile menu */
     transform: translateX(100%);
     transition: transform 0.5s ease-in;
-}
+  }
 
-.nav-links.nav-active {
+  .nav-links.nav-active {
     transform: translateX(0%);
-}
+  }
 
-.nav-links li {
+  .nav-links li {
     text-align: center;
     padding: 10px;
-}
+  }
 
-.burger {
+  .burger {
     display: block;
-}
+  }
+
+  .burger.active div:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+
+  .burger.active div:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger.active div:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
 }
 </style>

@@ -27,6 +27,8 @@ async function initializeApp() {
   const getDocs = firebaseModule.getDocs;
   const query = firebaseModule.query;
   const where = firebaseModule.where;
+  const updateDoc = firebaseModule.updateDoc;
+
   const doc = firebaseModule.doc;
   const getDoc = firebaseModule.getDoc;
 //   const setDoc = firebaseModule.setDoc;
@@ -72,35 +74,45 @@ async function initializeApp() {
 
 app.post('/updateDB', async (req, res) => {
     try {
-        const{username , newCodeRating} = req.body;
-        const userRef = doc(db, "Users", username);
-        const userDoc = await getDoc(userRef);
-        if (!userDoc.exists) {
+        const { username, newCodeRating } = req.body;
+        console.log(req.body)
+        if (typeof newCodeRating !== 'number') {
+            return res.status(400).send({ message: "newCodeRating must be a number" });
+        }
+        const usersRef = collection(db, "Users");
+        const q = query(usersRef, where("username", "==", username));
+        const userQuerySnapshot = await getDocs(q);
+
+        if (userQuerySnapshot.empty) {
             return res.status(404).send({ message: "User not found" });
-        } 
-        const userData = userDoc.data();
-        let {codeRating, gamesPlayed} = userData.Stats;
-        if (codeRating === 0 || gamesPlayed === 0) {
-            codeRating = newRating;
-            gamesPlayed = 1;
         }
-        else 
-        {
-            gamesPlayed += 1;
-            codeRating = codeRating + newCodeRating;
-            codeRating = codeRating / gamesPlayed;
+        const userDoc = userQuerySnapshot.docs[0];
+        const statsRef = collection(db, `Users/${userDoc.id}/Stats`);
+        const statsQuerySnapshot = await getDocs(statsRef);
+
+        if (statsQuerySnapshot.empty) {
+            return res.status(404).send({ message: "Stats not found for user" });
         }
-        await userRef.update({
-            'stats.codeRating': codeRating,
-            'stats.gamesPlayed': gamesPlayed
+
+        const statsDoc = statsQuerySnapshot.docs[0];
+        const statsData = statsDoc.data().userStats;
+        let codeRating = statsData.codeRating; // Assuming this is already a number
+        let gamesPlayed = statsData.gamesPlayed; // Assuming this is already a number
+        gamesPlayed += 1;
+        codeRating = (codeRating * (gamesPlayed - 1) + newCodeRating) / gamesPlayed;
+
+        await updateDoc(statsDoc.ref, {
+            'userStats.codeRating': codeRating,
+            'userStats.gamesPlayed': gamesPlayed
         });
-        
-        res.status(200).send({ message: "User stats updated", codeRating, gamesPlayed });
+
+        return res.status(200).send({ message: "User stats updated", codeRating, gamesPlayed });
     } catch (e) {
-        res.status(500).send({ message: "Error updating user code quality", error: e.message });
+        console.error("Error in /updateDB:", e);
+        res.status(500).send({ message: "Error updating user stats", error: e.message });
     }
-}
-);
+});
+
 
 app.post('/adduser', async (req, res) => {
     try {
@@ -116,13 +128,13 @@ app.post('/adduser', async (req, res) => {
         const docRef = await addDoc(collection(db, "Users"), userData);
         const userStatsRef = collection(db, `Users/${docRef.id}/Stats`);
         const userStatsSnapshot = await getDocs(userStatsRef);
-        const initaluserstats ={
+        const userStats ={
             "codeRating": 0.0,
             "gamesPlayed": 0,
             "Wins": 0,
         }
         if (userStatsSnapshot.empty) {
-            await addDoc(userStatsRef, { initaluserstats });
+            await addDoc(userStatsRef, { userStats });
         }
         res.status(200).send({ message: "User added", id: docRef.id });
 
@@ -163,15 +175,20 @@ async function checkPasswordMatches(password, username) {
 }
 async function getUserStats(username) {
     try {
-        const querySnapshot = await getDocs(query(collection(db, "Users"), where("username", "==", username)));
-        if (!querySnapshot.empty) {
+        const usersRef = collection(db, "Users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
 
-            const userStatsRef = collection(db, `Users/${querySnapshot.docs[0].id}/Stats`);
-            const userStatsSnapshot = await getDocs(userStatsRef);
-            if (!userStatsSnapshot.empty) {
-                console.log(userStatsSnapshot.docs[0].data());
-                return userStatsSnapshot.docs[0].data();
-               
+        if (!querySnapshot.empty) {
+            // Assuming there is only one user with this username
+            const userDoc = querySnapshot.docs[0];
+            const statsRef = collection(db, `Users/${userDoc.id}/Stats`);
+            const statsSnapshot = await getDocs(statsRef);
+
+            if (!statsSnapshot.empty) {
+                // Assuming there is only one Stats document per user
+                const statsDoc = statsSnapshot.docs[0];
+                return statsDoc.data();
             } else {
                 return null;
             }
@@ -179,7 +196,6 @@ async function getUserStats(username) {
             return null;
         }
     } catch (e) {
-        console.error("Error retrieving user stats: ", e.message);
         return null;
     }
 }
@@ -199,12 +215,13 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/requestStats', async (req, res) => {
+app.post('/requestStatsForMainMenu', async (req, res) => {
     try {
         const userData = req.body;
         const userStats = await getUserStats(userData.username);
         res.status(200).send({ message: "User stats retrieved", stats: userStats });
     } catch (e) {
+        console.log(e);
         res.status(500).send({ message: "Error retrieving user stats", error: e.message });
     }
 });
@@ -219,7 +236,6 @@ app.post('/requestStats', async (req, res) => {
     }
   });
 
-  // Socket.IO event handling
   io.on('connection', socket => {
 
     socket.on('disconnect', () => {
@@ -391,7 +407,7 @@ app.post('/requestStats', async (req, res) => {
   });
 
   // Start the server
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.SERVER_PORT;
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 

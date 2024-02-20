@@ -71,7 +71,6 @@ export default {
               lobbyCode: this.lobbyCode,
             }
           }); // Redirect to the quiz page
-      alert('Quiz started!');
     },
     pickRandomQuestion() {
       this.QuestionDecisionHeader = "Loading a random question... ";
