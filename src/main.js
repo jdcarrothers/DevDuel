@@ -45,12 +45,14 @@ const routes = [
   {
     name: 'Signin',
     path: '/signin',
-    component: SigninComponent
+    component: SigninComponent,
+    meta: {hideNavbar: true}
   },
   {
     name: 'Register',
     path: '/register',
-    component: RegisterComponent
+    component: RegisterComponent,
+    meta: {hideNavbar: true}
   },
   {
     name: 'MainMenu',

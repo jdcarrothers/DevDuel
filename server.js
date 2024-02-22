@@ -19,7 +19,6 @@ corsOptions = {
     origin: '*', // or use '*' to allow all origins
 };
 async function initializeApp() {
-  // Dynamically import Firebase configuration and Firestore methods
   const firebaseModule = await import('./firebaseconfig.mjs');
   const db = firebaseModule.db;
   const collection = firebaseModule.collection;
@@ -28,7 +27,6 @@ async function initializeApp() {
   const query = firebaseModule.query;
   const where = firebaseModule.where;
   const updateDoc = firebaseModule.updateDoc;
-
   const doc = firebaseModule.doc;
   const getDoc = firebaseModule.getDoc;
 //   const setDoc = firebaseModule.setDoc;
@@ -165,7 +163,6 @@ async function checkUsernameExists(username) {
 
 async function checkPasswordMatches(password, username) {
     try {
-        console.log('attempting login');
         const querySnapshot = await getDocs(query(collection(db, "Users"), where("username", "==", username), where("password", "==", password)));
         return !querySnapshot.empty; // Returns true if user exists, otherwise false
     } catch (error) {

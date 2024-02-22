@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBarComponent />
+    <NavBarComponent v-if="shouldShowNavbar" />
     <RouterView />
   </div>
 </template>
@@ -11,6 +11,11 @@ export default {
   name: 'App',
   components: {
     NavBarComponent
+  },
+  computed: {
+    shouldShowNavbar() {
+      return !this.$route.meta.hideNavbar;
+    },
   },
   mounted() {
     //check if there is a local storage token and if it is valid then redirect to the connect page else redirect to the signin page
