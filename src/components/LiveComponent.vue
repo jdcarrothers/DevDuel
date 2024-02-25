@@ -70,33 +70,34 @@ export default {
   methods: {
     async evaulateCodeCleanliness() {
       try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_SERVER_IP}/evaluate-code`,
-          {
-            question: this.Question,
-            language: this.Language,
-            codeSnippet: this.code,
-            expectedOutput: this.ExpectedOutput,
-          }
-        );
-        let codeR = response.data.Rating;
-        let codeReason = response.data.Reasoning;
-        codeR = Math.round(codeR);
-        codeR = parseInt(codeR);
-        codeReason = String(codeReason);
-
-
+        // const response = await axios.post(
+        //   `${process.env.VUE_APP_SERVER_IP}/evaluate-code`,
+        //   {
+        //     question: this.Question,
+        //     language: this.Language,
+        //     codeSnippet: this.code,
+        //     expectedOutput: this.ExpectedOutput,
+        //   }
+        // );
+        // let codeR = response.data.Rating;
+        // let codeReason = response.data.Reasoning;
+        // codeR = Math.round(codeR);
+        // codeR = parseInt(codeR);
+        // codeReason = String(codeReason);
+        let codeR = 100;
+        let codeReason = "Good job!";
         const update = await axios.post(
           `${process.env.VUE_APP_SERVER_IP}/updateDB`,
           {
-            username: this.username,
+            username: localStorage.getItem("username"),
             newCodeRating: codeR,
           },
         );
         console.log(update.data);
+        localStorage.setItem("codeRating", codeR);
+        localStorage.setItem("codeReasoning", codeReason);
         this.$router.push({
           path: `/endUser/${this.lobbyCode}`,
-          query: { username: this.username, codeRating: codeR, codeReasoning: codeReason},
         });
       } catch (error) {
         console.error("Error evaluating code cleanliness:", error);

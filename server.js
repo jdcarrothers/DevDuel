@@ -205,7 +205,7 @@ app.post('/login', async (req, res) => {
         if (passwordMatches) {
             res.status(200).send({ message: "Correct username and password" });
         } else {
-            res.status(401).send({ message: "Incorrect username and/or password" });
+            res.status(401).send({ message: "Incorrect username or password" });
         }
     } catch (e) {
         res.status(500).send({ message: "Error logging in user", error: e.message });

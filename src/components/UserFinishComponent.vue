@@ -18,15 +18,15 @@ export default {
   name: 'UserFinishComponent',
   data() {
     return {
-        username: "",
         codeRating: null,
-        CodeReasoning: "",
+        codeReasoning: "",
     };
     },
     mounted() {
-        this.username = this.$route.query.username || this.$route.params.username;
-        this.codeRating = this.$route.query.codeRating || this.$route.params.codeRating;
-        this.codeReasoning = this.$route.query.codeReasoning || this.$route.params.codeReasoning;
+      this.codeRating = localStorage.getItem('codeRating');
+      this.codeReasoning = localStorage.getItem('codeReasoning');
+      localStorage.removeItem('codeRating');
+      localStorage.removeItem('codeReasoning');
     },
 };
 </script>
