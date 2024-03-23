@@ -81,7 +81,7 @@ export default {
   justify-content: center;
   align-items: center;
   scale: 1.2;
-  padding-top: 25%;
+  padding-top: 10%;
 }
 
 .login-form {

@@ -37,13 +37,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBdwjxiJprztz-DAHp3ZvhIpy5V35KRzH4",
-    authDomain: "devduel-3e84c.firebaseapp.com",
-    projectId: "devduel-3e84c",
-    storageBucket: "devduel-3e84c.appspot.com",
-    messagingSenderId: "406887322776",
-    appId: "1:406887322776:web:9b339dd07022cbc10deced",
-    measurementId: "G-ZZMD3DF0Z4",
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
+  measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -136,6 +136,7 @@ export default {
         console.log(uid);
         localStorage.setItem("uid", uid);
         console.log(userCredential);
+        this.$router.push("/home");
       })
       .catch((error) => {
         if (error.code === "auth/invalid-email") {
@@ -183,7 +184,7 @@ export default {
   justify-content: center;
   align-items: center;
   scale: 1.2;
-  padding-top: 25%;
+  padding-top: 10%;
 }
 
 .login-form {
