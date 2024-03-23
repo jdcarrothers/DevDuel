@@ -1,71 +1,147 @@
 <template>
-  <div class="container">
-    <h2>Register</h2>
-    <div>
-      <label for="username" class="input-label">Username</label>
-      <input
-        v-model="user.username"
-        type="text"
-        id="username"
-        placeholder="Enter Username"
-        class="input-field"
-      />
-    </div>
-    <div>
-      <label for="email" class="input-label">Email</label>
-      <input
-        v-model="user.email"
-        type="email"
-        id="email"
-        placeholder="Enter Email"
-        class="input-field"
-      />
-    </div>
-    <div>
-      <label for="password" class="input-label">Password</label>
-      <input
-        v-model="user.password"
-        type="password"
-        id="password"
+  <div class="wrapper">
+    <form @submit.prevent="validateForm" class="login-form">
+      <h1>Register</h1>
+      <div class="input-box">
+        <input v-model="email"  id="email" placeholder="Email" required>
+      </div>
+      <div class="input-box">
+        <input 
+        required
+        @input="checkPasswordStrength"
         placeholder="Enter Password"
-        class="input-field"
-      />
-    </div>
-    <button @click="addUser" class="btn">Submit</button>
-    <button type="button" @click="goToHome" class="btn">Bypass</button>
-    <p class="movement" @click="goToLogin">Click here to sign in</p>
+        :type="showPassword ? 'text' : 'password'"
+        v-model="password">
+        <img :src="showPassword ? require('@/assets/eye-open.png') : require('@/assets/eye-closed.png')" class="eyeImg" @click="toggleShowPass">
+      </div>
+      <div class="line-box">
+          <div class="line" :style="{ width: passwordStrengthBarWidth + '%', backgroundColor: passwordStrengthBarColor }"></div>
+        </div>
+        <div class="password-strength-box">
+          <div class="error-container">
+            <div class="error-message" v-for="tip in tips" :key="tip">{{ tip }}</div>
+          </div>
+        </div>
+      <button type="submit" class="btn"  >
+        <span >Continue</span>
+      </button>
+      <div class="register-link">
+        <p>Have an account? <a href="#" @click="goToLogin">Login</a></p>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBdwjxiJprztz-DAHp3ZvhIpy5V35KRzH4",
+    authDomain: "devduel-3e84c.firebaseapp.com",
+    projectId: "devduel-3e84c",
+    storageBucket: "devduel-3e84c.appspot.com",
+    messagingSenderId: "406887322776",
+    appId: "1:406887322776:web:9b339dd07022cbc10deced",
+    measurementId: "G-ZZMD3DF0Z4",
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 export default {
   data() {
     return {
-      user: {
-        username: "",
-        password: "",
-        email: "",
-      },
+      email: "",
+      password: "",
+      errors: {}, 
+      passwordStrengthTips: '',
+      showPassword: false,
+      validPassword: false,
+      tips: [],
     };
   },
   methods: {
-    async addUser() {
-      try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_SERVER_IP}/adduser`,
-          this.user
-        );
-        console.log(response);
-        console.log(this.user);
-        localStorage.setItem("username", this.user.username);
-        this.goToHome();
-      } catch (error) {
-        alert(error.response.data.message);
+    validateForm() {
+      console.log("!")
+      this.errors = {}; 
+      let isValid = false;
+      if(this.validPassword === false) {
+        this.errors.password = "Password is not strong enough.";
+        isValid = false;
+        console.log(isValid)
+      }
+      else {
+        this.errors.password = "";
+        isValid = true;
+      }
+      console.log(isValid)
+      if (isValid) {
+        this.addUser();
       }
     },
-    goToHome() {
-      this.$router.push("/home");
+    toggleShowPass() {
+      this.showPassword = !this.showPassword;
+    },
+    checkPasswordStrength() {
+      if (!this.password) {
+        this.tips = [];
+        this.passwordStrengthBarColor = "transparent";
+        this.passwordStrengthBarWidth = 0;
+        return; // Stop further execution
+      }
+      this.tips = [];
+      let strength = 0;
+      const conditions = [/.{8,}/, /[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
+      if (!/.{8,}/.test(this.password)) this.tips.push("Use at least 8 characters.");
+      if (!/[A-Z]/.test(this.password)) this.tips.push("Include an uppercase letter.");
+      if (!/[a-z]/.test(this.password)) this.tips.push("Include a lowercase letter.");
+      if (!/[0-9]/.test(this.password)) this.tips.push("Include a number.");
+      if (!/[!@#$%^&*]/.test(this.password)) this.tips.push("Include a special character");
+      conditions.forEach(condition => {
+        if (condition.test(this.password)) strength++;
+      });
+      switch (strength) {
+        case 1:
+        case 2:
+          this.passwordStrengthBarColor = "red";
+          this.passwordStrengthBarWidth = 25;
+          this.validPassword = false;
+          break;
+        case 3:
+          this.passwordStrengthBarColor = "orange";
+          this.passwordStrengthBarWidth = 50;
+          this.validPassword = false;
+          break;
+        case 4:
+          this.passwordStrengthBarColor = "lightgreen";
+          this.passwordStrengthBarWidth = 75;
+          this.validPassword = true;
+          break;
+        case 5:
+          this.passwordStrengthBarColor = "green";
+          this.passwordStrengthBarWidth = 100;
+          this.validPassword = true;
+          break;
+        default:
+          this.passwordStrengthBarColor = "#d3d3d3";
+          this.passwordStrengthBarWidth = 0;
+          this.validPassword = false;
+      }
+    },
+    async addUser() {
+      console.log("aduser activated")
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        const uid = user.uid;
+        console.log(uid);
+        localStorage.setItem("uid", uid);
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-email") {
+          alert('Error, ensure a valid email was entered.');
+        }
+      });
     },
     goToLogin() {
       this.$router.push("/signin");
@@ -75,74 +151,145 @@ export default {
 </script>
 
 <style scoped>
-.container {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+.password-strength-box {
+  margin-top: 15px;
+  min-height: 60px;
+  display: flex;
+}
+.password-tips {
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  overflow-wrap: break-word;
+  opacity: 0; /* make it invisible by default */
+  transition: opacity 0.5s ease-in-out; /* smooth transition for opacity change */
+}
+
+.line {
+  height: 5px;
+  margin-top:-15px;
+  border-radius: 5px;
+  transition: width 0.5s ease, background-color 0.5s ease;
+}
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scale: 1.2;
+  padding-top: 25%;
+}
+
+.login-form {
+  padding: 40px;
+  background: linear-gradient(145deg, #FFFFFF, #D6DDE4);
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  max-width: 360px;
+  width: 100%;
+}
+
+h1 {
+  color: #333; 
+  margin-bottom: 30px;
   text-align: center;
-  font-family: "Arial", sans-serif;
-  color: #333;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  font-size: 24px;
 }
 
-h2 {
-  color: #4a76a8;
-  font-size: 2em;
-  margin-bottom: 20px;
-}
-.movement {
-  padding-top: 10px;
-  color: #4a76a8;
-  cursor: pointer;
-  margin-top: 20px;
-  font-size: 1.1em;
+.input-box {
+  position: relative;
+  margin-bottom: 30px;
 }
 
-.input-label {
-  display: block;
-  color: #4a76a8;
-  margin-bottom: 5px;
-  font-size: 1em;
+.input-box input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #DDE0E4;
+  border-radius: 8px;
+  outline: none;
+  background-color: #FAFBFC; 
+  transition: all 0.3s ease;
 }
 
-.input-field {
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 2px solid #d0d9e6;
-  border-radius: 4px;
-  width: 80%;
-  font-family: "Arial", sans-serif;
+.input-box input:focus {
+  border-color: #007BFF; 
+  background-color: #FFFFFF;
+}
+
+.input-box i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
+  color: #888888; 
 }
 
 .btn {
-  background-color: #2f5683;
-  color: white;
-  padding: 15px 30px;
-  font-size: 1.1em;
+  width: 100%;
+  padding: 15px;
+  background-color: #007BFF; 
+  color: #FFFFFF;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  margin-top: 20px;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
-  background-color: #3a5a78;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: #0056b3; 
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 20px 10px;
-  }
-
-  .input-field,
-  .btn {
-    width: 90%;
-  }
+.remember-forgot a, .register-link a {
+  color: #007BFF; 
+  text-decoration: none;
 }
+
+.register-link {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: -15px;
+  margin-bottom: 10px;
+}
+
+.error-container {
+  display: grid;
+  padding-left: 15px;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  grid-template-rows: auto auto; /* rows based on content */
+  gap: 10px; /* Adjust gap as needed */
+  margin-top: 0px;
+  margin-bottom:10px;
+}
+
+.error-message {
+  color: #6c757d; /* A neutral, informative color */
+  font-size: 0.75em;
+  margin-top: 5px;
+}
+
+.eyeImg {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 25px; 
+  height: 25px;
+}
+.honeypot{
+  opacity: 0;
+}
+
 </style>

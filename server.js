@@ -112,7 +112,7 @@ app.post('/updateDB', async (req, res) => {
 });
 
 
-app.post('/adduser', async (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         const userData = req.body;
         const emailExists = await checkEmailExists(userData.email);

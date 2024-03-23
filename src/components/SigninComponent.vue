@@ -3,7 +3,7 @@
     <form @submit.prevent="login" class="login-form">
       <h1>Login</h1>
       <div class="input-box">
-        <input v-model="user.username" type="text" placeholder="Username" required>
+        <input v-model="user.username" type="text" placeholder="Email (fix code)" required>
       </div>
       <div class="input-box">
         <input v-model="user.password" :type="showPassword ? 'text' : 'password'" placeholder="Password" required>
@@ -28,7 +28,6 @@
 
 <script>
 import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -81,17 +80,18 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   scale: 1.2;
+  padding-top: 25%;
 }
 
 .login-form {
   padding: 40px;
-  background: linear-gradient(145deg, #FFFFFF, #F0F2F5);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  background: linear-gradient(145deg, #FFFFFF, #D6DDE4);
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
+  border: 1px solid #E2E8F0;
   border-radius: 12px;
-  width: 100%;
   max-width: 360px;
+  width: 100%;
 }
 
 h1 {

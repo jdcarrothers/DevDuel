@@ -69,16 +69,16 @@ export default {
   },
   methods: {
     async evaulateCodeCleanliness() {
-      try {
-        // const response = await axios.post(
-        //   `${process.env.VUE_APP_SERVER_IP}/evaluate-code`,
-        //   {
-        //     question: this.Question,
-        //     language: this.Language,
-        //     codeSnippet: this.code,
-        //     expectedOutput: this.ExpectedOutput,
-        //   }
-        // );
+      // try {
+      //   const response = await axios.post(
+      //     `${process.env.VUE_APP_SERVER_IP}/evaluate-code`,
+      //     {
+      //       question: this.Question,
+      //       language: this.Language,
+      //       codeSnippet: this.code,
+      //       expectedOutput: this.ExpectedOutput,
+      //     }
+      //   );
         // let codeR = response.data.Rating;
         // let codeReason = response.data.Reasoning;
         // codeR = Math.round(codeR);
@@ -99,9 +99,9 @@ export default {
         this.$router.push({
           path: `/endUser/${this.lobbyCode}`,
         });
-      } catch (error) {
-        console.error("Error evaluating code cleanliness:", error);
-      }
+      // } catch (error) {
+      //   console.error("Error evaluating code cleanliness:", error);
+      // }
     },
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
