@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,

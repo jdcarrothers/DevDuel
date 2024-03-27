@@ -1,40 +1,75 @@
 <template>
-  <div class="wrapper">
-    <form @submit.prevent="validateForm" class="login-form">
-      <h1>Register</h1>
-      <div class="input-box">
-        <input v-model="email"  id="email" placeholder="Email" required>
-      </div>
-      <div class="input-box">
-        <input 
-        required
-        @input="checkPasswordStrength"
-        placeholder="Enter Password"
-        :type="showPassword ? 'text' : 'password'"
-        v-model="password">
-        <img :src="showPassword ? require('@/assets/eye-open.png') : require('@/assets/eye-closed.png')" class="eyeImg" @click="toggleShowPass">
-      </div>
-      <div class="line-box">
-          <div class="line" :style="{ width: passwordStrengthBarWidth + '%', backgroundColor: passwordStrengthBarColor }"></div>
+  <div class="container">
+
+    <div class="wrapper">
+      <form @submit.prevent="validateForm" class="login-form">
+        <h1>Register</h1>
+        <div class="input-box">
+          <input v-model="email"  id="email" placeholder="Email" required>
         </div>
-        <div class="password-strength-box">
-          <div class="error-container">
-            <div class="error-message" v-for="tip in tips" :key="tip">{{ tip }}</div>
+        <div class="input-box">
+          <input 
+          required
+          @input="checkPasswordStrength"
+          placeholder="Enter Password"
+          :type="showPassword ? 'text' : 'password'"
+          v-model="password">
+          <img :src="showPassword ? require('@/assets/eye-open.png') : require('@/assets/eye-closed.png')" class="eyeImg" @click="toggleShowPass">
+        </div>
+        <div class="line-box">
+            <div class="line" :style="{ width: passwordStrengthBarWidth + '%', backgroundColor: passwordStrengthBarColor }"></div>
           </div>
+          <div class="password-strength-box">
+            <div class="error-container">
+              <div class="error-message" v-for="tip in tips" :key="tip">{{ tip }}</div>
+            </div>
+          </div>
+        <button type="submit" class="btn"  >
+          <span >Continue</span>
+        </button>
+        <div class="register-link">
+          <p>Have an account? <a href="#" @click="goToLogin">Login</a></p>
         </div>
-      <button type="submit" class="btn"  >
-        <span >Continue</span>
-      </button>
-      <div class="register-link">
-        <p>Have an account? <a href="#" @click="goToLogin">Login</a></p>
+      </form>
+
+      <div class="divider">
+          <span>OR</span>
+        </div>
+
+      <div class="otherSignInMethods">
+          <button @click="signUpWithGoogle" class="provider-button">
+          <svg height="100%" viewBox="0 0 20 20" width="100%" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" fill="#4285F4"></path><path d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z" fill="#34A853"></path><path d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z" fill="#FBBC05"></path><path d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z" fill="#EA4335"></path></svg>
+          <span>Continue with Google</span>
+          </button>
+           
+          
+          <button @click="signUpWithGithub" class="provider-button">
+          <img _ngcontent-ng-c618043916="" fireschemeimage="" alt="" class="provider-icon ng-star-inserted" src="//www.gstatic.com/mobilesdk/160409_mobilesdk/images/auth_service_github.svg">
+          <span>Continue with Github</span>
+          </button>
+
+          <button @click="signUpWithTwiiter" class="provider-button">
+            <svg height="100%" viewBox="0 0 20 20" width="100%" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M20 3.924a8.212 8.212 0 01-2.357.646 4.111 4.111 0 001.804-2.27c-.792.47-1.67.812-2.605.996A4.103 4.103 0 009.85 7.038a11.645 11.645 0 01-8.458-4.287 4.118 4.118 0 00-.555 2.066 4.1 4.1 0 001.825 3.415 4.074 4.074 0 01-1.858-.513v.052a4.105 4.105 0 003.29 4.022 4.01 4.01 0 01-1.852.072 4.106 4.106 0 003.833 2.85A8.268 8.268 0 010 16.411a11.602 11.602 0 006.29 1.846c7.547 0 11.674-6.253 11.674-11.675 0-.18-.004-.355-.01-.53.8-.58 1.496-1.3 2.046-2.125" fill="#55ACEE" fill-rule="evenodd"></path></svg>
+            <span>Continue with Twitter</span>
+          </button>
       </div>
-    </form>
-  </div>
+
+
+      <div class="honeypot">
+        <input type="text">
+      </div>
+
+    </div>
+</div>
+
 </template>
 
 <script>
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup,
+   GithubAuthProvider, getAuth,
+    createUserWithEmailAndPassword,
+  TwitterAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -66,6 +101,7 @@ export default {
       let isValid = false;
       if(this.validPassword === false) {
         this.errors.password = "Password is not strong enough.";
+        
         isValid = false;
         console.log(isValid)
       }
@@ -78,9 +114,71 @@ export default {
         this.addUser();
       }
     },
-    toggleShowPass() {
-      this.showPassword = !this.showPassword;
+    //external proivders login--------------------------------
+    async signUpWithGoogle() {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        console.log(token);
+        const user = result.user;
+        const uid = user.uid;
+        console.log(uid);
+        localStorage.setItem("uid", uid);
+        this.$router.push("/home");
+      } catch (error) {
+        console.log(error);
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          alert('You have already signed up with a different auth provider for that email.');
+        } else {
+          alert('Error during sign up with Google.');
+        }
+      }
     },
+    async signUpWithGithub() {
+      try {
+        const provider = new GithubAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        console.log(token);
+        const user = result.user;
+        const uid = user.uid;
+        console.log(uid);
+        localStorage.setItem("uid", uid);
+        this.$router.push("/home");
+      } catch (error) {
+        console.log(error);
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          alert('You have already signed up with a different auth provider for that email.');
+        } else {
+          alert('Error during sign up with Github.');
+        }
+      }
+    },
+    async signUpWithTwiiter() {
+      try {
+        const provider = new TwitterAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const credential = TwitterAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        console.log(token);
+        const user = result.user;
+        const uid = user.uid;
+        console.log(uid);
+        localStorage.setItem("uid", uid);
+        this.$router.push("/home");
+      } catch (error) {
+        console.log(error);
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          alert('You have already signed up with a different auth provider for that email.');
+        } else {
+          alert('Error during sign up with Twitter.');
+        }
+      }
+    },
+
     checkPasswordStrength() {
       if (!this.password) {
         this.tips = [];
@@ -142,6 +240,10 @@ export default {
         if (error.code === "auth/invalid-email") {
           alert('Error, ensure a valid email was entered.');
         }
+        if (error.code === "auth/email-already-in-use") {
+          alert('Error, email already in use.');
+        }
+
       });
     },
     goToLogin() {
@@ -157,6 +259,78 @@ export default {
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
+}
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider:before,
+.divider:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%; /* Adjust based on preference */
+  height: 1px;
+  background-color: #DDE0E4;
+}
+
+.divider:before {
+  left: 5%;
+}
+
+.divider:after {
+  right: 5%;
+}
+
+.divider span {
+  background-color: #fff; /* Assuming white background; adjust as necessary */
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
+}
+.otherSignInMethods {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; 
+}
+
+.provider-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px; 
+  width: 100%;
+  max-width: 250px;
+  background-color: #ffffff;
+  color: #757575; 
+  border: 2px solid #DDE0E4; 
+  border-radius: 5px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  cursor: pointer;
+  transition: all 0.3s ease; 
+  text-decoration: none;
+}
+
+.provider-button:hover, .provider-button:focus {
+  background-color: #f5f5f5; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  outline: none; 
+}
+
+.provider-button svg, .provider-button img {
+  width: 20px; 
+  height: 20px;
+  margin-right: 10px; 
+}
+
+.provider-button span {
+  font-size: 14px; 
+  font-weight: 500;
+  color: #5F6368; 
+  font-family: 'Roboto', sans-serif; 
 }
 .password-strength-box {
   margin-top: 15px;
