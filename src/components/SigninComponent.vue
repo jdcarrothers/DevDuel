@@ -93,7 +93,6 @@ export default {
   max-width: 360px;
   width: 100%;
 }
-
 h1 {
   color: #333; 
   margin-bottom: 30px;
