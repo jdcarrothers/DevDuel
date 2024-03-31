@@ -9,7 +9,7 @@ import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
 import SigninComponent from './components/SigninComponent.vue'
 import SignupComponent from './components/SignupComponent.vue'
-import MainMenuComponent from './components/MainMenuComponent.vue'
+import DashboardComponent from './components/DashboardComponent.vue'
 import HostFinishComponent from './components/HostFinishComponent.vue'
 import UserFinishComponent from './components/UserFinishComponent.vue'
 const routes = [
@@ -52,9 +52,9 @@ const routes = [
     meta: {hideNavbar: true}
   },
   {
-    name: 'MainMenu',
-    path: '/home',
-    component: MainMenuComponent
+    name: 'Dashboard',
+    path: '/dashboard',
+    component: DashboardComponent
   }
   ,
   {

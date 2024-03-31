@@ -1,6 +1,6 @@
 <template>
 
-
+<!-- navbar with logo -->
   <div class="navbar">
     <div class="logo-container">
       <img :src="require('@/assets/devDuelLogo.png')" class="logo" alt="logo">
@@ -11,6 +11,7 @@
   <div class="outer-container">
   <div class="container">
   <transition-group name="slide-fade" mode="out-in" class="container">
+  <!-- forename and second name fields -->
         <div class="namePanel fade-in" v-if="usernameValidated">
       <h1>Let's Get to Know You!</h1>
       <div class="input-box">
@@ -23,6 +24,7 @@
         <span>Complete Registration</span>
       </button>
     </div>
+    <!-- username fields -->
         <div class="usernamePanel fade-in" v-if="continueValidated && !usernameValidated">
           <h1>Choose Your Unique Username</h1>
           <div class="input-box">
@@ -34,11 +36,11 @@
             <span>Continue</span>
           </button>
         </div>
-        <div class="wrapper" v-if="!continueValidated">
 
+    <!-- traditional email and password login  -->
+        <div class="wrapper" v-if="!continueValidated">
         <form @submit.prevent="validateForm" class="login-form">
           <h1>Sign Up</h1>
-
         <div class="input-box">
             <input v-model="email"  id="email" placeholder="Email" required>
           </div>
@@ -72,9 +74,8 @@
           </div>
 
         </form>
-
-      <!-- end of wrapper> -->
     </div>
+
     <div class="vertical-divider" v-if="!continueValidated">
     </div>
     <!-- start of socials -->
@@ -99,10 +100,9 @@
         </div>
       </div>
   </transition-group>
-    <!-- end of container -->
   </div>
 </div>
-
+<!-- hidden honeypot to prevent bot spam to db -->
 <div class="honeypot">
   <input type="text" v-model="hpot">
 </div>
@@ -110,6 +110,7 @@
 </template>
 
 <script>
+// import statements
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, signInWithPopup,
    GithubAuthProvider, getAuth,
@@ -126,8 +127,10 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
   measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// data 
 export default {
   data() {
     return {
@@ -148,28 +151,34 @@ export default {
     };
   },
   methods: {
+    // form validation and submission of email and password login
     validateForm() {
       this.errors = {}; 
       let isValid = false;
       if(this.hpot) {
+        // if bot detected, return
         console.log("bot detected")
         return;
       }
       if(this.validPassword === false) {
+        // final password check
         this.errors.password = "Password is not strong enough.";
         isValid = false;
-        console.log(isValid)
       }
       else {
+        // hide error message & continue
         this.errors.password = "";
         isValid = true;
       }
-      console.log(isValid)
+      // if all checks pass, submit form
+      //valid email check handled from firebase
       if (isValid) {
         this.addUser();
       }
     },
     //external proivders login--------------------------------
+    // this.continueValidated = true >  //pushes user to next step > transitions out first form and onto next step (username)
+
     async signUpWithGoogle() {
         try { 
           const provider = new GoogleAuthProvider();
@@ -197,12 +206,11 @@ export default {
           const provider = new TwitterAuthProvider();
           await signInWithPopup(auth, provider);
           this.continueValidated = true;
-          
         } catch (error) {
           this.handleAuthError(error);
         }
       },
-
+      //password strength check, happens on input
     checkPasswordStrength() {
       if (!this.password) {
         this.tips = [];
@@ -221,6 +229,7 @@ export default {
       conditions.forEach(condition => {
         if (condition.test(this.password)) strength++;
       });
+      // set password strength bar color and width, 
       switch (strength) {
         case 1:
         case 2:
@@ -256,11 +265,14 @@ export default {
         this.handleAuthError(error);
       }
       this.continueValidated = true;
+      //pushes user to next step
     },
     toggleShowPass() {
+      // toggle password visibility
       this.showPassword = !this.showPassword;
     },
     handleAuthError(error) {
+      //uses vue's default alert to show errors
       let errorMessage = 'An error occurred during sign up.';
       switch (error.code) {
         case 'auth/account-exists-with-different-credential':
@@ -276,15 +288,19 @@ export default {
       alert(errorMessage);
     },
     continueToName() {
+      //happens on username panel, validates username
       const validationResult = this.validateUsername(this.username);
       if (validationResult.valid) {
+        //if username is valid, continue to next step > refreshes css, etc.
         this.usernameValidated = true;
         this.usernameAlert = "";
       } else {
+        //if username is invalid, show error message
         this.usernameAlert = validationResult.message;
       }
     },
     validateUsername(username) {
+      //handels character limit and bad words + alphanumeric check
       const Filter = require('bad-words');
       const filter = new Filter();
       
@@ -301,33 +317,40 @@ export default {
         return { valid: true, message: "" }; 
       }
     },
+
     async finishRegistration() {
     if (!this.forename || !this.surname) {
+      //ensures forename and surname are entered
       alert("Please enter your forename and surname.");
       return;
     }
+    //
+    //gets data from firebase auth, 
     const auth = getAuth();
     const user = auth.currentUser;
 
     if (user) {
       const { uid, email } = user;
-
       try {
+        //posts data to backend
         await Axios.post("http://localhost:3000/api/signup", {
+          //extra fields are configured in back end
           forename: this.forename,
           surname: this.surname,
           username: this.username,
-          uid, // shorthand for uid: uid
-          email // shorthand for email: email
+          uid, 
+          email
 
         });
-        // Redirect after successful registration
+        //if successful, pushes user to home page
         this.$router.push("/home");
+
       } catch (error) {
+        //if error, alert user (should never happen, but just in case), if testing prooves a failure, fix then
         alert("An error occurred during registration.");
       }
     } else {
-      // If no user is signed in, handle accordingly
+      //if the initial form registration - the one that acctually creates the user - is not completed, alert user
       alert("User must be signed in to finish registration.");
     }
   }
@@ -338,6 +361,7 @@ export default {
 </script>
 
 <style scoped>
+/* The worlds most messy css, probably so much duplication but we move */
 * {
   margin: 0;
   padding: 0;
@@ -679,7 +703,7 @@ h1 {
 }
 .fade-in {
   animation-name: fadeIn;
-  animation-duration: 0.8s; /* Adjust the duration as needed */
-  animation-fill-mode: forwards; /* Keeps the element visible after the animation completes */
+  animation-duration: 0.8s; 
+  animation-fill-mode: forwards; 
 }
 </style>

@@ -20,23 +20,13 @@ export default {
     },
   },
   mounted() {
-    if(this.$route.meta.hideNavbar) {
-      if(localStorage.getItem('username') === null) {
-        this.$router.push('/signin');
-      }
-      else {
-        this.$router.push('/home');
-      }
-    }
-  },
-  created() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (!user && this.$route.meta.requiresAuth) {
         this.$router.push('/signin');
       }
     });
-}
+  },
 }
 
 </script>

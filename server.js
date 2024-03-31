@@ -94,8 +94,8 @@ app.post('/api/updateDB', async (req, res) => {
 
         const statsDoc = statsQuerySnapshot.docs[0];
         const statsData = statsDoc.data().userStats;
-        let codeRating = statsData.codeRating; // Assuming this is already a number
-        let gamesPlayed = statsData.gamesPlayed; // Assuming this is already a number
+        let codeRating = statsData.codeRating;
+        let gamesPlayed = statsData.gamesPlayed; 
         gamesPlayed += 1;
         codeRating = (codeRating * (gamesPlayed - 1) + newCodeRating) / gamesPlayed;
 
