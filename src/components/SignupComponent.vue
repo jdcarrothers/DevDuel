@@ -10,7 +10,31 @@
 
   <div class="outer-container">
   <div class="container">
-    <div class="wrapper">
+        <div class="namePanel" v-if="usernameValidated">
+      <h1>Let's Get to Know You!</h1>
+      <div class="input-box">
+        <input v-model="forename" id="name" placeholder="Your first name" required>
+      </div>
+      <div class="input-box">
+        <input v-model="surname" id="surname" placeholder="Your last name" required>
+      </div>
+      <button @click="finishRegistration" class="btn">
+        <span>Complete Registration</span>
+      </button>
+    </div>
+        <div class="usernamePanel" v-if="continueValidated && !usernameValidated">
+        <button @click="ChangeU">ChangeU</button>
+          <h1>Choose Your Unique Username</h1>
+          <div class="input-box">
+            <input v-model="username" id="username" placeholder="Create your username" required>
+          </div>
+          <p class="usernameAlert">{{ this.usernameAlert  }}</p>
+          <p class="username-instruction">Choose carefully! Your username will be visible to everyone.</p>
+          <button @click="continueToName" class="btn">
+            <span>Continue</span>
+          </button>
+        </div>
+        <div class="wrapper" v-if="!continueValidated">
       <button @click="changeV">Click me</button>
         <form @submit.prevent="validateForm" class="login-form">
           <h1>Sign Up</h1>
@@ -51,10 +75,10 @@
 
       <!-- end of wrapper> -->
     </div>
-    <div class="vertical-divider">
+    <div class="vertical-divider" v-if="!continueValidated">
     </div>
     <!-- start of socials -->
-    <div class="social-signin-section">
+    <div class="social-signin-section" v-if="!continueValidated">
           <div class="otherSignInMethods">
 
               <button @click="signUpWithGoogle" class="provider-button">
@@ -91,6 +115,7 @@ import { GoogleAuthProvider, signInWithPopup,
    GithubAuthProvider, getAuth,
     createUserWithEmailAndPassword,
   TwitterAuthProvider } from "firebase/auth";
+// import { Axios } from "axios";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -108,6 +133,10 @@ export default {
     return {
       email: "",
       password: "",
+      username: "",
+      usernameAlert: "",
+      forename: "",
+      surname: "",
       errors: {}, 
       passwordStrengthTips: '',
       showPassword: false,
@@ -115,10 +144,8 @@ export default {
       tips: [],
       hpot: "",
       continueValidated: false,
+      usernameValidated: false,
     };
-  },
-  mounted() {
-    console.log("Sign mounted");
   },
   methods: {
     validateForm() {
@@ -127,7 +154,6 @@ export default {
       let isValid = false;
       if(this.hpot) {
         console.log("bot detected")
-
         return;
       }
       if(this.validPassword === false) {
@@ -186,7 +212,7 @@ export default {
         this.tips = [];
         this.passwordStrengthBarColor = "transparent";
         this.passwordStrengthBarWidth = 0;
-        return; // Stop further execution
+        return; 
       }
       this.tips = [];
       let strength = 0;
@@ -255,8 +281,57 @@ export default {
     },
     changeV() {
       this.continueValidated = !this.continueValidated;
-      console.log(this.continueValidated)
+    },
+    ChangeU() {
+      this.usernameValidated = !this.usernameValidated;
+    },
+    continueToName() {
+      const validationResult = this.validateUsername(this.username);
+      if (validationResult.valid) {
+        console.log("continue");
+        this.usernameValidated = true;
+        this.usernameAlert = "";
+      } else {
+        this.usernameAlert = validationResult.message;
+      }
+    },
+    validateUsername(username) {
+      const Filter = require('bad-words');
+      const filter = new Filter();
+      
+      if (filter.isProfane(username)) {
+        return { valid: false, message: "Username cannot contain inappropriate language." };
+      }
+      else if (username.length < 3 || username.length > 20) {
+        return { valid: false, message: "Username must be between 3 and 20 characters long." };
+      }
+      else if (!username.match(/^[a-zA-Z0-9_]+$/)) {
+        return { valid: false, message: "Username can only contain alphanumeric characters and underscores." };
+      }
+      else {
+        return { valid: true, message: "" }; 
+      }
+    },
+    finishRegistration() {
+      if(!this.forename || !this.surname) {
+        alert("Please enter your name and surname.");
+        return;
+      }
+    //   axios.post("http://localhost:3000/api/user", {
+    //     email: this.email,
+    //     forename: this.forename,
+    //     surname: this.surname,
+    //     username: this.username,
+    //   }).then(() => {
+    //     this.$router.push("/home");
+    //   }).catch((error) => {
+    //     console.error(error);
+    //     alert("An error occurred during registration.");
+    //   });
+    //   console.log("finish registration");
+    // }
     }
+
   },
 };
 </script>
@@ -267,6 +342,14 @@ export default {
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 .social-signin-section{
   padding-top: 19%;
@@ -298,12 +381,12 @@ export default {
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 2px; /* Thickness of the line */
+  width: 2px;
   background-color: #DDE0E4;
 }
 
 .vertical-divider span {
-  background-color: #fff; /* Matches the background of your container/wrapper */
+  background-color: #fff; 
   padding: 0 10px;
 }
 .otherSignInMethods {
@@ -320,22 +403,22 @@ export default {
   padding: 10px 15px;
   width: 100%;
   max-width: 250px;
-  background-color: #ffffff; /* Start with a clean white base */
+  background-color: #ffffff;
   color: #757575;
-  border: 2px solid #f0f0f0; /* Lighter border for a softer look */
-  border-radius: 10px; /* Slightly increased for a more modern, rounded look */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); /* Softened shadow for depth without harshness */
+  border: 2px solid #f0f0f0; 
+  border-radius: 10px; 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); 
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for interactions */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
   text-decoration: none;
-  position: relative; /* Added for the hover effect */
-  overflow: hidden; /* Ensure the pseudo-element does not exceed the button bounds */
+  position: relative; 
+  overflow: hidden; 
 }
 
 .provider-button:hover, .provider-button:focus {
-  background-color: #ffffff; /* Maintain the white background */
-  transform: translateY(-2px); /* Slight lift effect */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow for lifted effect */
+  background-color: #ffffff; 
+  transform: translateY(-2px); 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
 }
 
 .provider-button::before {
@@ -345,7 +428,7 @@ export default {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent); /* Subtle highlight */
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent); 
   transition: all 0.4s ease;
   z-index: 0;
 }
@@ -358,7 +441,7 @@ export default {
   width: 20px;
   height: 20px;
   margin-right: 10px;
-  z-index: 1; /* Ensure icons stay above the pseudo-element */
+  z-index: 1; 
 }
 
 .provider-button span {
@@ -366,7 +449,7 @@ export default {
   font-weight: 500;
   color: #5F6368;
   font-family: 'Roboto', sans-serif;
-  z-index: 1; /* Ensure text stays above the pseudo-element */
+  z-index: 1; 
 }
 .password-strength-box {
   margin-top: 15px;
@@ -379,8 +462,8 @@ export default {
   margin-top: 5px;
   margin-bottom: 30px;
   overflow-wrap: break-word;
-  opacity: 0; /* make it invisible by default */
-  transition: opacity 0.5s ease-in-out; /* smooth transition for opacity change */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out; 
 }
 .line {
   height: 5px;
@@ -396,16 +479,18 @@ export default {
   padding-top: 12.5%;
 }
 .container {
-  max-width: 600px; /* Max width for inner content */
-  width: 100%; /* Ensure it remains responsive */
-  background: #ffffff; /* Updated to pure white for a cleaner look */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle depth */
-  border: 1px solid #f0f0f0; /* Lighter border color for subtlety */
-  border-radius: 12px; /* Retained border radius for a smooth appearance */
-  padding: 20px; /* Retained padding for internal spacing */
+  max-width: 600px; 
+  width: 100%;
+  background: #ffffff; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  border: 1px solid #f0f0f0; 
+  border-radius: 12px; 
+  padding: 20px;
   display: flex;
-  flex-direction: row; /* Retained layout style */
+  flex-direction: row; 
+  min-height: 426px;
 }
+
 
   
 
@@ -428,13 +513,14 @@ h1 {
   border: 1px solid #DDE0E4;
   border-radius: 8px;
   outline: none;
-  background-color: #FAFBFC; 
-  transition: all 0.3s ease;
+  background-color: #FAFBFC;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .input-box input:focus {
-  border-color: #007BFF; 
+  border-color: #007BFF;
   background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.25); 
 }
 
 .input-box i {
@@ -448,17 +534,21 @@ h1 {
 .btn {
   width: 100%;
   padding: 15px;
-  background-color: #007BFF; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #007BFF;
   color: #FFFFFF;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold; 
 }
 
 .btn:hover {
-  background-color: #0056b3; 
+  background-color: #0056b3;
+  transform: translateY(-2px); 
 }
 
 .register-link a {
@@ -481,15 +571,15 @@ h1 {
 .error-container {
   display: grid;
   padding-left: 15px;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns */
-  grid-template-rows: auto auto; /* rows based on content */
-  gap: 10px; /* Adjust gap as needed */
+  grid-template-columns: repeat(2, 1fr); 
+  grid-template-rows: auto auto;
+  gap: 10px; 
   margin-top: 0px;
   margin-bottom:10px;
 }
 
 .error-message {
-  color: #6c757d; /* A neutral, informative color */
+  color: #6c757d;
   font-size: 0.75em;
   margin-top: 5px;
 }
@@ -509,25 +599,77 @@ h1 {
 
 .navbar {
   width: 100%;
-  background-color: #fff; /* Adjust if you have a specific color theme */
-  padding: 10px 0; /* Adjust based on the size of your logo and navbar height preference */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for a slight elevation effect */
-  position: fixed; /* Keeps the navbar at the top */
+  background-color: #fff; 
+  padding: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  position: fixed; 
   top: 0;
   left: 0;
-  z-index: 1000; /* Ensures navbar stays above other content */
+  z-index: 1000;
 }
 
 .logo-container {
-  width: 100%; /* Ensures the logo container spans the full navbar width */
+  width: 100%;
   display: flex;
-  justify-content: center; /* Centers the logo horizontally */
-  align-items: center; /* Centers the logo vertically */
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
-  height: 75px; /* Adjust based on your logo's size for a balanced look */
-  /* Add any additional styling needed for your logo */
+  height: 75px;
+
+}
+.slide-fade-enter-active, .slide-fade-leave-active {
+  transition: all 0.5s ease; 
+  opacity: 1;
 }
 
+
+.slide-fade-enter {
+  opacity: 0; 
+  transform: translateX(100%);
+}
+
+
+.slide-fade-leave-to {
+  opacity: 0; 
+  transform: translateX(-100%); 
+}
+
+.usernamePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%; 
+  max-width: 450px; 
+  margin: auto; 
+}
+
+.usernamePanel h1 {
+  margin-top: -15px;
+  font-size: 24px;
+  color: #333;
+}
+.username-instruction {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+}
+.usernameAlert {
+  color: red;
+  font-size: 1em;
+  margin-top: -15px;
+  margin-bottom: 10px;
+}
+.namePanel{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 450px; 
+  margin: auto; 
+}
 </style>

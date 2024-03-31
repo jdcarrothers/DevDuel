@@ -1,8 +1,6 @@
-// Import Vue and VueRouter
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Import your components
 import App from './App.vue'
 import LobbyAdminPanelComponent from './components/LobbyAdminPanelComponent.vue'
 import LiveQuestionComponent from './components/LiveComponent.vue'
@@ -14,7 +12,6 @@ import SignupComponent from './components/SignupComponent.vue'
 import MainMenuComponent from './components/MainMenuComponent.vue'
 import HostFinishComponent from './components/HostFinishComponent.vue'
 import UserFinishComponent from './components/UserFinishComponent.vue'
-// Define routes
 const routes = [
   { 
     name: 'LiveQuestion',
