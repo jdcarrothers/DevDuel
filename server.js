@@ -35,7 +35,7 @@ async function initializeApp() {
   app.use(cors(corsOptions));
   app.use(bodyParser.json());
   const openai = new OpenAI({apiKey: `${process.env.VUE_APP_OPENAI_KEY}`});
-  app.post('/evaluate-code', async (req, res) => {
+  app.post('/api/evaluate-code', async (req, res) => {
     try {
         const { question, language, codeSnippet, expectedOutput } = req.body;
         aiModelAsk();
@@ -65,12 +65,12 @@ async function initializeApp() {
             res.status(200).send(JSON.parse(completion.choices[0].message.content));
           }
     } catch (error) {
-        console.error('Error in /evaluate-code:', error);
+        console.error('Error in /api/evaluate-code:', error);
         res.status(500).send(error.toString());
     }
 });
 
-app.post('/updateDB', async (req, res) => {
+app.post('/api/updateDB', async (req, res) => {
     try {
         const { username, newCodeRating } = req.body;
         console.log(req.body)
@@ -106,120 +106,23 @@ app.post('/updateDB', async (req, res) => {
 
         return res.status(200).send({ message: "User stats updated", codeRating, gamesPlayed });
     } catch (e) {
-        console.error("Error in /updateDB:", e);
+        console.error("Error in /api/updateDB:", e);
         res.status(500).send({ message: "Error updating user stats", error: e.message });
     }
 });
 
 
-app.post('/register', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
     try {
+        console.log(req.body);
         const userData = req.body;
-        const emailExists = await checkEmailExists(userData.email);
-        if (emailExists) {
-            return res.status(400).send({ message: "Email already exists" });
-        }
-        const usernameExists = await checkUsernameExists(userData.username);
-        if (usernameExists) {
-            return res.status(400).send({ message: "Username already exists" });
-        }
+        userData.codeRating = 0.0;
+        userData.gamesPlayed = 0;
+        userData.Wins = 0;
         const docRef = await addDoc(collection(db, "Users"), userData);
-        const userStatsRef = collection(db, `Users/${docRef.id}/Stats`);
-        const userStatsSnapshot = await getDocs(userStatsRef);
-        const userStats ={
-            "codeRating": 0.0,
-            "gamesPlayed": 0,
-            "Wins": 0,
-        }
-        if (userStatsSnapshot.empty) {
-            await addDoc(userStatsRef, { userStats });
-        }
         res.status(200).send({ message: "User added", id: docRef.id });
-
     } catch (e) {
         res.status(500).send({ message: "Error adding user", error: e.message });
-    }
-});
-
-async function checkEmailExists(email) {
-    try {
-        const querySnapshot = await getDocs(query(collection(db, "Users"), where("email", "==", email)));
-        return !querySnapshot.empty;
-    } catch (e) {
-        console.error("Error checking email existence: ", e);
-        return false;
-    }
-}
-
-async function checkUsernameExists(username) {
-    try {
-        const querySnapshot = await getDocs(query(collection(db, "Users"), where("username", "==", username)));
-        return !querySnapshot.empty;
-    } catch (e) {
-        console.error("Error checking username existence: ", e);
-        return false;
-    }
-}
-
-async function checkPasswordMatches(password, username) {
-    try {
-        const querySnapshot = await getDocs(query(collection(db, "Users"), where("username", "==", username), where("password", "==", password)));
-        return !querySnapshot.empty; // Returns true if user exists, otherwise false
-    } catch (error) {
-        console.error('Error finding user:', error.message);
-        return false; // Return false if there's an error
-    }
-}
-async function getUserStats(username) {
-    try {
-        const usersRef = collection(db, "Users");
-        const q = query(usersRef, where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            // Assuming there is only one user with this username
-            const userDoc = querySnapshot.docs[0];
-            const statsRef = collection(db, `Users/${userDoc.id}/Stats`);
-            const statsSnapshot = await getDocs(statsRef);
-
-            if (!statsSnapshot.empty) {
-                // Assuming there is only one Stats document per user
-                const statsDoc = statsSnapshot.docs[0];
-                return statsDoc.data();
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    } catch (e) {
-        return null;
-    }
-}
-
-app.post('/login', async (req, res) => {
-    try {
-        const userData = req.body;
-        const passwordMatches = await checkPasswordMatches(userData.password, userData.username);
-
-        if (passwordMatches) {
-            res.status(200).send({ message: "Correct username and password" });
-        } else {
-            res.status(401).send({ message: "Incorrect username or password" });
-        }
-    } catch (e) {
-        res.status(500).send({ message: "Error logging in user", error: e.message });
-    }
-});
-
-app.post('/requestStatsForMainMenu', async (req, res) => {
-    try {
-        const userData = req.body;
-        const userStats = await getUserStats(userData.username);
-        res.status(200).send({ message: "User stats retrieved", stats: userStats });
-    } catch (e) {
-        console.log(e);
-        res.status(500).send({ message: "Error retrieving user stats", error: e.message });
     }
 });
 
@@ -360,9 +263,6 @@ app.post('/requestStatsForMainMenu', async (req, res) => {
         }
     }
     );
-
-
-
     function generateUniqueLobbyCode() {
         let code;
         do {
@@ -403,7 +303,6 @@ app.post('/requestStatsForMainMenu', async (req, res) => {
     }
   });
 
-  // Start the server
   const PORT = process.env.SERVER_PORT;
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }

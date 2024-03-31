@@ -10,7 +10,8 @@
 
   <div class="outer-container">
   <div class="container">
-        <div class="namePanel" v-if="usernameValidated">
+  <transition-group name="slide-fade" mode="out-in" class="container">
+        <div class="namePanel fade-in" v-if="usernameValidated">
       <h1>Let's Get to Know You!</h1>
       <div class="input-box">
         <input v-model="forename" id="name" placeholder="Your first name" required>
@@ -22,8 +23,7 @@
         <span>Complete Registration</span>
       </button>
     </div>
-        <div class="usernamePanel" v-if="continueValidated && !usernameValidated">
-        <button @click="ChangeU">ChangeU</button>
+        <div class="usernamePanel fade-in" v-if="continueValidated && !usernameValidated">
           <h1>Choose Your Unique Username</h1>
           <div class="input-box">
             <input v-model="username" id="username" placeholder="Create your username" required>
@@ -35,7 +35,7 @@
           </button>
         </div>
         <div class="wrapper" v-if="!continueValidated">
-      <button @click="changeV">Click me</button>
+
         <form @submit.prevent="validateForm" class="login-form">
           <h1>Sign Up</h1>
 
@@ -98,7 +98,7 @@
               </button>
         </div>
       </div>
-      
+  </transition-group>
     <!-- end of container -->
   </div>
 </div>
@@ -115,7 +115,7 @@ import { GoogleAuthProvider, signInWithPopup,
    GithubAuthProvider, getAuth,
     createUserWithEmailAndPassword,
   TwitterAuthProvider } from "firebase/auth";
-// import { Axios } from "axios";
+import Axios from 'axios';
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -149,7 +149,6 @@ export default {
   },
   methods: {
     validateForm() {
-      console.log("!")
       this.errors = {}; 
       let isValid = false;
       if(this.hpot) {
@@ -178,7 +177,6 @@ export default {
           this.continueValidated = true;
 
         } catch (error) {
-          console.error(error);
           this.handleAuthError(error);
         }
       },
@@ -190,7 +188,6 @@ export default {
           this.continueValidated = true;
 
         } catch (error) {
-          console.error(error);
           this.handleAuthError(error);
         }
       },
@@ -202,7 +199,6 @@ export default {
           this.continueValidated = true;
           
         } catch (error) {
-          console.error(error);
           this.handleAuthError(error);
         }
       },
@@ -257,9 +253,9 @@ export default {
       try {
         await createUserWithEmailAndPassword(auth, this.email, this.password);
       } catch (error) {
-        console.error(error);
         this.handleAuthError(error);
       }
+      this.continueValidated = true;
     },
     toggleShowPass() {
       this.showPassword = !this.showPassword;
@@ -279,16 +275,9 @@ export default {
       }
       alert(errorMessage);
     },
-    changeV() {
-      this.continueValidated = !this.continueValidated;
-    },
-    ChangeU() {
-      this.usernameValidated = !this.usernameValidated;
-    },
     continueToName() {
       const validationResult = this.validateUsername(this.username);
       if (validationResult.valid) {
-        console.log("continue");
         this.usernameValidated = true;
         this.usernameAlert = "";
       } else {
@@ -312,28 +301,40 @@ export default {
         return { valid: true, message: "" }; 
       }
     },
-    finishRegistration() {
-      if(!this.forename || !this.surname) {
-        alert("Please enter your name and surname.");
-        return;
-      }
-    //   axios.post("http://localhost:3000/api/user", {
-    //     email: this.email,
-    //     forename: this.forename,
-    //     surname: this.surname,
-    //     username: this.username,
-    //   }).then(() => {
-    //     this.$router.push("/home");
-    //   }).catch((error) => {
-    //     console.error(error);
-    //     alert("An error occurred during registration.");
-    //   });
-    //   console.log("finish registration");
-    // }
+    async finishRegistration() {
+    if (!this.forename || !this.surname) {
+      alert("Please enter your forename and surname.");
+      return;
     }
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-  },
-};
+    if (user) {
+      const { uid, email } = user;
+
+      try {
+        await Axios.post("http://localhost:3000/api/signup", {
+          forename: this.forename,
+          surname: this.surname,
+          username: this.username,
+          uid, // shorthand for uid: uid
+          email // shorthand for email: email
+
+        });
+        // Redirect after successful registration
+        this.$router.push("/home");
+      } catch (error) {
+        alert("An error occurred during registration.");
+      }
+    } else {
+      // If no user is signed in, handle accordingly
+      alert("User must be signed in to finish registration.");
+    }
+  }
+
+    }
+  };
+
 </script>
 
 <style scoped>
@@ -617,25 +618,19 @@ h1 {
 
 .logo {
   height: 75px;
-
 }
 .slide-fade-enter-active, .slide-fade-leave-active {
-  transition: all 0.5s ease; 
-  opacity: 1;
+  transition: all 0.5s ease;
 }
 
-
-.slide-fade-enter {
-  opacity: 0; 
-  transform: translateX(100%);
+.slide-fade-enter, .slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%);
 }
 
-
-.slide-fade-leave-to {
-  opacity: 0; 
-  transform: translateX(-100%); 
+.slide-fade-leave-active {
+  position: absolute;
 }
-
 .usernamePanel {
   display: flex;
   flex-direction: column;
@@ -664,6 +659,7 @@ h1 {
   margin-bottom: 10px;
 }
 .namePanel{
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -671,5 +667,19 @@ h1 {
   width: 100%;
   max-width: 450px; 
   margin: auto; 
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation-name: fadeIn;
+  animation-duration: 0.8s; /* Adjust the duration as needed */
+  animation-fill-mode: forwards; /* Keeps the element visible after the animation completes */
 }
 </style>
