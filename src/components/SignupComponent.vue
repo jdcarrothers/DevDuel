@@ -11,8 +11,9 @@
   <div class="outer-container">
   <div class="container">
     <div class="wrapper">
+      <button @click="changeV">Click me</button>
         <form @submit.prevent="validateForm" class="login-form">
-          <h1>Register</h1>
+          <h1>Sign Up</h1>
 
         <div class="input-box">
             <input v-model="email"  id="email" placeholder="Email" required>
@@ -43,7 +44,7 @@
           </button>
 
           <div class="register-link">
-            <p>Have an account? <a href="#" @click="goToLogin">Login</a></p>
+            <p>Have an account? <a href="/signin" >Sign In</a></p>
           </div>
 
         </form>
@@ -67,7 +68,7 @@
               <span>Continue with Github</span>
               </button>
 
-              <button @click="signUpWithTwiiter" class="provider-button">
+              <button @click="signUpWithTwitter" class="provider-button">
                 <svg height="100%" viewBox="0 0 20 20" width="100%" fit="" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M20 3.924a8.212 8.212 0 01-2.357.646 4.111 4.111 0 001.804-2.27c-.792.47-1.67.812-2.605.996A4.103 4.103 0 009.85 7.038a11.645 11.645 0 01-8.458-4.287 4.118 4.118 0 00-.555 2.066 4.1 4.1 0 001.825 3.415 4.074 4.074 0 01-1.858-.513v.052a4.105 4.105 0 003.29 4.022 4.01 4.01 0 01-1.852.072 4.106 4.106 0 003.833 2.85A8.268 8.268 0 010 16.411a11.602 11.602 0 006.29 1.846c7.547 0 11.674-6.253 11.674-11.675 0-.18-.004-.355-.01-.53.8-.58 1.496-1.3 2.046-2.125" fill="#55ACEE" fill-rule="evenodd"></path></svg>
                 <span>Continue with Twitter</span>
               </button>
@@ -113,7 +114,11 @@ export default {
       validPassword: false,
       tips: [],
       hpot: "",
+      continueValidated: false,
     };
+  },
+  mounted() {
+    console.log("Sign mounted");
   },
   methods: {
     validateForm() {
@@ -141,68 +146,40 @@ export default {
     },
     //external proivders login--------------------------------
     async signUpWithGoogle() {
-      try {
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        console.log(token);
-        const user = result.user;
-        const uid = user.uid;
-        console.log(uid);
-        localStorage.setItem("uid", uid);
-        this.$router.push("/home");
-      } catch (error) {
-        console.log(error);
-        if (error.code === 'auth/account-exists-with-different-credential') {
-          alert('You have already signed up with a different auth provider for that email.');
-        } else {
-          alert('Error during sign up with Google.');
+        try { 
+          const provider = new GoogleAuthProvider();
+          await signInWithPopup(auth, provider);
+          this.continueValidated = true;
+
+        } catch (error) {
+          console.error(error);
+          this.handleAuthError(error);
         }
-      }
-    },
-    async signUpWithGithub() {
-      try {
-        const provider = new GithubAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        console.log(token);
-        const user = result.user;
-        const uid = user.uid;
-        console.log(uid);
-        localStorage.setItem("uid", uid);
-        this.$router.push("/home");
-      } catch (error) {
-        console.log(error);
-        if (error.code === 'auth/account-exists-with-different-credential') {
-          alert('You have already signed up with a different auth provider for that email.');
-        } else {
-          alert('Error during sign up with Github.');
+      },
+
+      async signUpWithGithub() {
+        try {
+          const provider = new GithubAuthProvider();
+          await signInWithPopup(auth, provider);
+          this.continueValidated = true;
+
+        } catch (error) {
+          console.error(error);
+          this.handleAuthError(error);
         }
-      }
-    },
-    async signUpWithTwiiter() {
-      try {
-        const provider = new TwitterAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const credential = TwitterAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        console.log(token);
-        const user = result.user;
-        const uid = user.uid;
-        console.log(uid);
-        localStorage.setItem("uid", uid);
-        this.$router.push("/home");
-      } catch (error) {
-        console.log(error);
-        if (error.code === 'auth/account-exists-with-different-credential') {
-          alert('You have already signed up with a different auth provider for that email.');
-        } else {
-          alert('Error during sign up with Twitter.');
+      },
+
+      async signUpWithTwitter() {
+        try {
+          const provider = new TwitterAuthProvider();
+          await signInWithPopup(auth, provider);
+          this.continueValidated = true;
+          
+        } catch (error) {
+          console.error(error);
+          this.handleAuthError(error);
         }
-      }
-    },
+      },
 
     checkPasswordStrength() {
       if (!this.password) {
@@ -251,32 +228,35 @@ export default {
       }
     },
     async addUser() {
-      console.log("aduser activated")
-      createUserWithEmailAndPassword(auth, this.email, this.password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        const uid = user.uid;
-        console.log(uid);
-        localStorage.setItem("uid", uid);
-        console.log(userCredential);
-        this.$router.push("/home");
-      })
-      .catch((error) => {
-        if (error.code === "auth/invalid-email") {
-          alert('Error, ensure a valid email was entered.');
-        }
-        if (error.code === "auth/email-already-in-use") {
-          alert('Error, email already in use.');
-        }
-
-      });
-    },
-    goToLogin() {
-      this.$router.push("/signin");
+      try {
+        await createUserWithEmailAndPassword(auth, this.email, this.password);
+      } catch (error) {
+        console.error(error);
+        this.handleAuthError(error);
+      }
     },
     toggleShowPass() {
       this.showPassword = !this.showPassword;
     },
+    handleAuthError(error) {
+      let errorMessage = 'An error occurred during sign up.';
+      switch (error.code) {
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'An account already exists with the same email address but different sign-in credentials.';
+          break;
+        case 'auth/email-already-in-use':
+          errorMessage = 'Email already in use. Please sign in or use a different email.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+      }
+      alert(errorMessage);
+    },
+    changeV() {
+      this.continueValidated = !this.continueValidated;
+      console.log(this.continueValidated)
+    }
   },
 };
 </script>
@@ -481,7 +461,7 @@ h1 {
   background-color: #0056b3; 
 }
 
-.remember-forgot a, .register-link a {
+.register-link a {
   color: #007BFF; 
   text-decoration: none;
 }
@@ -525,9 +505,6 @@ h1 {
 }
 .honeypot{
   opacity: 0;
-}
-.branding {
-  text-align: center;
 }
 
 .navbar {

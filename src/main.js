@@ -10,7 +10,7 @@ import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.
 import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
 import SigninComponent from './components/SigninComponent.vue'
-import RegisterComponent from './components/RegisterComponent.vue'
+import SignupComponent from './components/SignupComponent.vue'
 import MainMenuComponent from './components/MainMenuComponent.vue'
 import HostFinishComponent from './components/HostFinishComponent.vue'
 import UserFinishComponent from './components/UserFinishComponent.vue'
@@ -50,8 +50,8 @@ const routes = [
   },
   {
     name: 'Register',
-    path: '/register',
-    component: RegisterComponent,
+    path: '/signup',
+    component: SignupComponent,
     meta: {hideNavbar: true}
   },
   {
