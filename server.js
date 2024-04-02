@@ -119,6 +119,9 @@ app.post('/api/signup', async (req, res) => {
         userData.codeRating = 0.0;
         userData.gamesPlayed = 0;
         userData.Wins = 0;
+        userData.problemsSolved = 0;
+        userData.isPremium = false;
+        
         const docRef = await addDoc(collection(db, "Users"), userData);
         res.status(200).send({ message: "User added", id: docRef.id });
     } catch (e) {

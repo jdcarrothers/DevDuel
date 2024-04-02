@@ -25,6 +25,9 @@ export default {
       if (!user && this.$route.meta.requiresAuth) {
         this.$router.push('/signin');
       }
+      else{
+        this.$router.push('/dashboard');
+      }
     });
   },
 }
