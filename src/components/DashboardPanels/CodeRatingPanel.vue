@@ -1,5 +1,6 @@
 <template> 
    <div class="inner-container"> 
+    <h1>Your Code Rating</h1>
       <div class="code-rating">
         <svg viewBox="0 0 36 36" class="circular-chart">
           <path class="circle-bg"
@@ -22,10 +23,6 @@
             ref="circle" />
           <text x="18" y="20.35" class="percentage" dominant-baseline="middle" text-anchor="middle">{{ codeRating }}%</text>
         </svg>
-      </div>
-      <div class="code-rating-explanation">
-        <h1>Your Code Rating</h1>
-        <p>Strive for improvement, one line at a time!</p>
       </div>
     </div>
 </template>
@@ -79,22 +76,29 @@ export default {
 <style scoped>
 .inner-container {
   display: flex;
-  flex-direction: row;
-  background-color: #d8d8d8;
-  border: 1px solid #DDE0E4;
-  border-radius: 8px;
+  flex-direction: column;
+  background: linear-gradient(145deg, #e6e6e6, #ffffff); 
+  border: none; 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); 
+  border-radius: 16px; 
   color: #333;
-  font-size: 1vw; /* Responsive font size */
-  width: 80vw; /* Adjust based on your preference */
-  max-width: 800px; /* Ensures it doesn't get too large on wider screens */
-  height: auto; /* Adjusts automatically based on content, you can also set a min-height if necessary */
-  box-sizing: border-box; /* Ensures padding is included in the width and height calculations */
+  max-width: 300px;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
 }
+
+.inner-container:hover {
+  transform: translateY(-10px); 
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); 
+}
+
 .circular-chart {
     display: block;
     margin: 10px auto;
-    max-width: 80%;
+    max-width: 100%;
     max-height: 250px;
+    scale: 0.79;
 }
   
 .circle-bg {
@@ -114,8 +118,7 @@ export default {
 .percentage {
     fill: #333;
     font-family: sans-serif;
-    font-size: 0.5em;
-    text-anchor: middle;
+    font-size: 11px;
 }
 
 .code-rating {
@@ -130,25 +133,5 @@ export default {
 /*  */
 .code-rating svg {
     height: 400px;
-}
-.code-rating-explanation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-left: 70px;
-}
-.codeRating {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #FAFBFC;
-    border: 1px solid #DDE0E4;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: #333;
-    font-size: 18px;
 }
 </style>

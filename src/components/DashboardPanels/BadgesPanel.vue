@@ -53,9 +53,9 @@ export default {
   text-align: center;
 }
 .badge {
-  width: 10vw; /* Adjust the width relative to the viewport width */
-  height: auto; /* Maintain aspect ratio */
-  max-width: 100px; /* Ensures the badge doesn't get too large */
+  width: 10vw;
+  height: auto;
+  max-width: 100px; 
 }
 .badges-layout {
   display: grid;
@@ -63,18 +63,26 @@ export default {
   grid-gap: 20px;
   padding: 20px;
 }
-.outer-container {
-  padding: 25px;
-  background-color: #d8d8d8;
-  border: 1px solid #DDE0E4;
-  border-radius: 8px;
+.inner-container {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, #e6e6e6, #ffffff);
+  border: none; 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); 
+  border-radius: 16px;
   color: #333;
-  font-size: 1.125rem; /* 18px equivalent, but consider using em for scalability */
-  width: 80vw; /* Adjust based on the desired width relative to the viewport width */
-  max-width: 300px; /* Ensures it doesn't get too large on wider screens */
-  min-height: 50vh; /* Minimum height relative to the viewport height */
-  height: auto; /* Adjusts automatically based on content */
-  box-sizing: border-box; /* Ensures padding is included in the height calculation */
+  max-width: 300px;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+.inner-container p{
+    font-size: 20px;
+  margin-bottom: 0; /* Adjust based on your layout needs */
+}
+.inner-container:hover {
+  transform: translateY(-10px); 
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); 
 }
 @media (max-width: 768px) {
   .outer-container {
