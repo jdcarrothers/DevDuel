@@ -21,7 +21,7 @@
             :stroke-dasharray="circumference + ' ' + circumference"
             stroke-dashoffset="circumference"
             ref="circle" />
-          <text x="18" y="20.35" class="percentage" dominant-baseline="middle" text-anchor="middle">{{ codeRating }}%</text>
+          <text x="18.3" y="19.9" class="percentage" dominant-baseline="middle" text-anchor="middle">{{ codeRating }}%</text>
         </svg>
       </div>
     </div>
@@ -75,30 +75,23 @@ export default {
 
 <style scoped>
 .inner-container {
+  font-family: Arial, sans-serif; /* Set the font family for all child components */
   display: flex;
   flex-direction: column;
-  background: linear-gradient(145deg, #e6e6e6, #ffffff); 
   border: none; 
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   border-radius: 16px; 
   color: #333;
-  max-width: 300px;
   text-align: center;
   padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; 
-}
-
-.inner-container:hover {
-  transform: translateY(-10px); 
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); 
+  transition: all 0.3s ease;
+  max-width: 260px;
 }
 
 .circular-chart {
     display: block;
-    margin: 10px auto;
-    max-width: 100%;
+    max-width: 80%;
     max-height: 250px;
-    scale: 0.79;
 }
   
 .circle-bg {

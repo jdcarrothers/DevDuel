@@ -49,8 +49,8 @@ export default {
 };
 </script>
 <style scoped>
-.inner-container {
-  text-align: center;
+.outer-container {
+  font-family: Arial, sans-serif; /* Set the font family for all child components */
 }
 .badge {
   width: 10vw;
@@ -66,7 +66,6 @@ export default {
 .inner-container {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(145deg, #e6e6e6, #ffffff);
   border: none; 
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); 
   border-radius: 16px;
@@ -77,12 +76,8 @@ export default {
   transition: transform 0.3s ease, box-shadow 0.3s ease; 
 }
 .inner-container p{
-    font-size: 20px;
+  font-size: 24px;
   margin-bottom: 0; /* Adjust based on your layout needs */
-}
-.inner-container:hover {
-  transform: translateY(-10px); 
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); 
 }
 @media (max-width: 768px) {
   .outer-container {

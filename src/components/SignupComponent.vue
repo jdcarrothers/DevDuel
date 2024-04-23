@@ -261,14 +261,13 @@ export default {
     async addUser() {
       try {
         await createUserWithEmailAndPassword(auth, this.email, this.password);
+        this.continueValidated = true;
       } catch (error) {
         this.handleAuthError(error);
+        this.continueValidated = false;
       }
-      this.continueValidated = true;
-      //pushes user to next step
     },
     toggleShowPass() {
-      // toggle password visibility
       this.showPassword = !this.showPassword;
     },
     handleAuthError(error) {
