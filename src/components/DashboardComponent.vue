@@ -18,14 +18,9 @@
         </div>
 
         <div class="right-container">
-
-            <!-- <div class="joinOrCreateMenu ">
-              <h1>Start or Join a Lobby</h1>
-              <button class="btn">Create Lobby</button>
-              <p>or enter code to</p>
-              <input type="text" placeholder="Enter Lobby Code">
-              <button class="btn">Join Lobby</button>
-            </div>
+          <div class="lobbyJoinOrCreatePanel">
+            <LobbyJoinOrCreatePanel />
+          </div>
 
             <div class="oneVersus ">
                 <h1>Face Off in a Duel</h1>
@@ -35,7 +30,7 @@
                   <option value="python">Python</option>
                 </select>
               <button class="btn">Challenge Now</button>
-            </div>   -->
+            </div>  
         </div>
       </div>
     </div>  
@@ -46,6 +41,7 @@
 import CodeRatingPanel from './DashboardPanels/CodeRatingPanel.vue';
 import BadgesPanel from './DashboardPanels/BadgesPanel.vue';
 import WelcomePanel from './DashboardPanels/WelcomePanel.vue';
+import LobbyJoinOrCreatePanel from './DashboardPanels/LobbyJoinOrCreatePanel.vue';
 export default {
   name: 'DashboardComponent',
   data() {
@@ -72,6 +68,7 @@ export default {
     CodeRatingPanel,
     BadgesPanel,
     WelcomePanel,
+    LobbyJoinOrCreatePanel,
   },
   mounted() {
     this.boolsForBadges();
@@ -99,10 +96,8 @@ export default {
 
 /* container configs */
 .dashboard{
-  align-items: center;
   padding-left: 10%;
   padding-right: 10%;
-  scale: 0.8;
 }
 .row-container {
   display: flex;

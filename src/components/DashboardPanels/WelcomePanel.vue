@@ -56,7 +56,7 @@ export default {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   border-radius: 20px;
   color: #333;
-  max-width: auto;
+  max-width: 1500px;
   background-color: #FFFFFF;
   transition: all 0.3s ease;
 }

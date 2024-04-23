@@ -2,7 +2,7 @@
 <nav class="navbar">
     <div class="logo">DevDuel</div>
     <ul class="nav-links" :class="{ 'nav-active': navOpen }">
-      <li><router-link to="/home">Home</router-link></li>
+      <li><router-link to="/dashboard">Home</router-link></li>
       <li><router-link to="/connect">Connect</router-link></li>
       <li><router-link to="">Account</router-link></li>
       <li><router-link to="">Contact</router-link></li>
