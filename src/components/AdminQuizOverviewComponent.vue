@@ -5,12 +5,13 @@
       <div v-if="players.length > 0" class="player-list">
         <h2>Players who have completed the question and got it correct will show here</h2>
         <div class="player-grid">
-          <div 
-            v-for="player in players" 
-            :key="player" 
-            :class="['player-box', {'completed-player': player.correct}]">
-            {{player.username}}
-            {{ player.correct ? '✅' : '❌' }}
+          <div
+            v-for="player in players"
+            :key="player"
+            :class="['player-box', { 'completed-player': player.correct }]"
+          >
+            {{ player.username }}
+            {{ player.correct ? "✅" : "❌" }}
           </div>
         </div>
       </div>
@@ -20,10 +21,10 @@
 </template>
 
 <script>
-import socketio from 'socket.io-client';
+import socketio from "socket.io-client";
 
 export default {
-  name: 'AdminQuizOverviewComponent',
+  name: "AdminQuizOverviewComponent",
   mounted() {
     this.initializeSocket();
     this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
@@ -39,21 +40,23 @@ export default {
   methods: {
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
-      this.socket.on('connect', () => {
-        console.log('Connected to server');
+      this.socket.on("connect", () => {
+        console.log("Connected to server");
       });
     },
     pollForPlayersWhoHaveCompleted() {
       setInterval(() => {
-        this.socket.emit('checkForPlayers', this.lobbyCode);
-        this.socket.once('recentPlayers', players => {
-        this.players = players;
+        this.socket.emit("checkForPlayers", this.lobbyCode);
+        this.socket.once("recentPlayers", (players) => {
+          this.players = players;
         });
       }, 1000);
     },
     endGame() {
-      this.$router.push({ path: `/end/${this.lobbyCode}`,
-      query: { lobbyCode: this.lobbyCode } });
+      this.$router.push({
+        path: `/end/${this.lobbyCode}`,
+        query: { lobbyCode: this.lobbyCode },
+      });
     },
   },
 };
@@ -83,7 +86,7 @@ export default {
 
 .lobby-container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   flex: 1;
   margin: 20px;
@@ -148,7 +151,7 @@ export default {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 .completed-player {
-  background-color: #4CAF50; /* Green background for completed players */
+  background-color: #4caf50; /* Green background for completed players */
 }
 
 @media (max-width: 768px) {
@@ -160,5 +163,4 @@ export default {
     width: auto;
   }
 }
-
 </style>

@@ -5,26 +5,28 @@
       <div v-if="players.length" class="player-list">
         <h2>Players:</h2>
         <div class="player-grid">
-          <div v-for="player in players" :key="player" class="player-box">{{ player.username }}</div>
+          <div v-for="player in players" :key="player" class="player-box">
+            {{ player.username }}
+          </div>
         </div>
       </div>
       <button class="btn" @click="startQuiz">Start Quiz</button>
     </div>
     <div class="question-container">
-      <h2>{{QuestionDecisionHeader}}</h2>
-      <button class="btn" id = "1" @click="pickRandomQuestion()" >{{ btnOneText }}</button>
+      <h2>{{ QuestionDecisionHeader }}</h2>
+      <button class="btn" id="1" @click="pickRandomQuestion()">{{ btnOneText }}</button>
       <h2>Selected Question</h2>
       <div class="selected-question">
         <h1 :style="{ color: '#3a5a78', marginBottom: '10px' }">{{ Language }}</h1>
-        <h2 :style="{ color: '#4a76a8', marginBottom: '10px' }"> {{ Question }}</h2>
-        <div v-html="ExpectedOutput" ></div>
+        <h2 :style="{ color: '#4a76a8', marginBottom: '10px' }">{{ Question }}</h2>
+        <div v-html="ExpectedOutput"></div>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
-import socketio from 'socket.io-client';
+import socketio from "socket.io-client";
 
 export default {
   data() {
@@ -48,48 +50,47 @@ export default {
   methods: {
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
-      this.socket.on('connect', () => {
-        console.log('Connected to server');
+      this.socket.on("connect", () => {
+        console.log("Connected to server");
       });
     },
     pollForPlayers() {
       setInterval(() => {
-        this.socket.emit('checkForPlayers', this.lobbyCode);
-        this.socket.once('recentPlayers', players => {
+        this.socket.emit("checkForPlayers", this.lobbyCode);
+        this.socket.once("recentPlayers", (players) => {
           this.players = players;
         });
       }, 300);
     },
     startQuiz() {
-      this.socket.emit('startQuiz', this.lobbyCode);
+      this.socket.emit("startQuiz", this.lobbyCode);
       this.$router.push({
-            path: `/admin/${this.lobbyCode}`,
-            query: {
-              lobbyCode: this.lobbyCode,
-            },
-            params: {
-              lobbyCode: this.lobbyCode,
-            }
-          }); // Redirect to the quiz page
+        path: `/admin/${this.lobbyCode}`,
+        query: {
+          lobbyCode: this.lobbyCode,
+        },
+        params: {
+          lobbyCode: this.lobbyCode,
+        },
+      }); // Redirect to the quiz page
     },
     pickRandomQuestion() {
       this.QuestionDecisionHeader = "Loading a random question... ";
       this.btnOneText = "Selected";
-      this.socket.emit('requestRandomQuestion', this.lobbyCode);
-      this.socket.once('questionSent', question => {
-        if(question.Question === this.Question){
+      this.socket.emit("requestRandomQuestion", this.lobbyCode);
+      this.socket.once("questionSent", (question) => {
+        if (question.Question === this.Question) {
           this.pickRandomQuestion();
         }
         this.QuestionDecisionHeader = "Question selected!";
         this.btnOneText = "Refresh to select another question";
         this.Question = question.Question;
         this.Language = question.Language;
-        this.ExpectedOutput = "The expected output: "+ question.ExpectedOutput ;
+        this.ExpectedOutput = "The expected output: " + question.ExpectedOutput;
         console.log(question);
       });
-      
     },
-  }
+  },
 };
 </script>
 
@@ -102,9 +103,10 @@ export default {
   margin: 0 20px;
 }
 
-.lobby-container, .question-container {
+.lobby-container,
+.question-container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   flex: 1; /* Assign equal importance to both containers */
   margin: 20px;
@@ -114,7 +116,9 @@ export default {
   background-color: #f9f9f9;
 }
 
-.header, .selected-question h1, .selected-question h2 {
+.header,
+.selected-question h1,
+.selected-question h2 {
   color: #4a76a8;
   margin-bottom: 20px;
 }
@@ -172,7 +176,7 @@ export default {
 
 .question-container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   flex: 1;
   margin: 20px;
@@ -203,7 +207,7 @@ export default {
   background-color: #d0d9e6;
   padding: 15px;
   border-radius: 8px;
-  font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
+  font-family: "Courier New", Courier, monospace; /* Monospaced font for code */
   white-space: pre-wrap; /* Preserve whitespace and formatting */
 }
 
@@ -216,5 +220,4 @@ export default {
     width: auto; /* Adjust button width for smaller screens */
   }
 }
-
 </style>

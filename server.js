@@ -167,27 +167,36 @@ app.post('/api/signup', async (req, res) => {
 
     socket.on('createLobbyRequest', () => {
         const genLobbyCode = generateUniqueLobbyCode();
-        console.log(`Lobby code generated: ${genLobbyCode}`);
         const newLobby = new Lobby(genLobbyCode);
         usedLobbyCodes.push(genLobbyCode);
         lobbies.push(newLobby);
         socket.emit('lobbyCreated', newLobby);
+        console.log(`Lobby created with ID ${genLobbyCode}`);
     });
 
     socket.on('joinLobbyRequest', (receivedData) => {
-        const lobbyID = parseInt(receivedData.lobbyID);
-        const userID = receivedData.userID;
-        const lobbyIndex = findLobbyIndex(lobbyID);
+        console.log(lobbies)
+        try {
+            const lobbyID = parseInt(receivedData.lobbyID);
+            console.log(lobbyID);
+            console.log(receivedData);
+            const userID = receivedData.userID;
+            const lobbyIndex = findLobbyIndex(lobbyID);
 
-        if (lobbyIndex !== -1) {
-            const newPlayer = new Player(userID);
-            lobbies[lobbyIndex].players.push(newPlayer);
-            console.log(`${userID} joined lobby with ID ${lobbyID}`);
-            socket.emit('lobbyJoinResponse', true);
-        } else {
-            console.error(`Error: Lobby with ID ${lobbyID} not found.`);
+            if (lobbyIndex !== -1) {
+                const newPlayer = new Player(userID);
+                lobbies[lobbyIndex].players.push(newPlayer);
+                console.log(`${userID} joined lobby with ID ${lobbyID}`);
+                socket.emit('lobbyJoinResponse', true);
+            } else {
+                console.error(`Error: Lobby with ID ${lobbyID} not found.`);
+                socket.emit('lobbyJoinResponse', false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
             socket.emit('lobbyJoinResponse', false);
         }
+
     });
 
     socket.on('startQuiz', (lID) => {

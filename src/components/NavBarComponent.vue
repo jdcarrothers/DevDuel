@@ -1,5 +1,5 @@
 <template>
-<nav class="navbar">
+  <nav class="navbar">
     <div class="logo">DevDuel</div>
     <ul class="nav-links" :class="{ 'nav-active': navOpen }">
       <li><router-link to="/dashboard">Home</router-link></li>
@@ -9,37 +9,37 @@
       <li @click="signOutUser">Sign Out</li>
     </ul>
     <div class="burger" @click="toggleNav">
-    <div></div>
-    <div></div>
-    <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
-</nav>
+  </nav>
 </template>
 
 <script>
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut } from "firebase/auth";
 
 export default {
-data() {
+  data() {
     return {
-    navOpen: false,
+      navOpen: false,
     };
-},
-methods: {
+  },
+  methods: {
     toggleNav() {
-    this.navOpen = !this.navOpen;
+      this.navOpen = !this.navOpen;
     },
     async signOutUser() {
-    const auth = getAuth();
-    try {
-      await signOut(auth);
-      console.log('User signed out successfully');
-      this.$router.push('/signin');
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
+      const auth = getAuth();
+      try {
+        await signOut(auth);
+        console.log("User signed out successfully");
+        this.$router.push("/signin");
+      } catch (error) {
+        console.error("Sign out error:", error);
+      }
+    },
   },
-},
 };
 </script>
 
@@ -51,7 +51,7 @@ methods: {
   background-color: #2f5683; /* Matching the button color for consistency */
   color: white;
   padding: 1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
 }
 

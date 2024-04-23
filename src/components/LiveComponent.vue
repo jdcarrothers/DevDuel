@@ -16,9 +16,7 @@
         :extensions="extensions"
         class="code-editor"
       ></codemirror>
-      <button class="btn" @click="runCodeAndGetSubmissionToken">
-        Submit Code
-      </button>
+      <button class="btn" @click="runCodeAndGetSubmissionToken">Submit Code</button>
       <h1 :style="{ color: '#3a5a78', marginBottom: '10px' }">
         When you run the code your output will be below
       </h1>
@@ -61,8 +59,7 @@ export default {
     };
   },
   mounted() {
-    this.lobbyCode =
-      this.$route.query.lobbyCode || this.$route.params.lobbyCode;
+    this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
     this.username = this.$route.query.username || this.$route.params.username;
     this.initializeSocket();
     this.loadCorrectQuestion();
@@ -79,26 +76,23 @@ export default {
       //       expectedOutput: this.ExpectedOutput,
       //     }
       //   );
-        // let codeR = response.data.Rating;
-        // let codeReason = response.data.Reasoning;
-        // codeR = Math.round(codeR);
-        // codeR = parseInt(codeR);
-        // codeReason = String(codeReason);
-        let codeR = 100;
-        let codeReason = "Good job!";
-        const update = await axios.post(
-          `${process.env.VUE_APP_SERVER_IP}/updateDB`,
-          {
-            username: localStorage.getItem("username"),
-            newCodeRating: codeR,
-          },
-        );
-        console.log(update.data);
-        localStorage.setItem("codeRating", codeR);
-        localStorage.setItem("codeReasoning", codeReason);
-        this.$router.push({
-          path: `/endUser/${this.lobbyCode}`,
-        });
+      // let codeR = response.data.Rating;
+      // let codeReason = response.data.Reasoning;
+      // codeR = Math.round(codeR);
+      // codeR = parseInt(codeR);
+      // codeReason = String(codeReason);
+      let codeR = 100;
+      let codeReason = "Good job!";
+      const update = await axios.post(`${process.env.VUE_APP_SERVER_IP}/updateDB`, {
+        username: localStorage.getItem("username"),
+        newCodeRating: codeR,
+      });
+      console.log(update.data);
+      localStorage.setItem("codeRating", codeR);
+      localStorage.setItem("codeReasoning", codeReason);
+      this.$router.push({
+        path: `/endUser/${this.lobbyCode}`,
+      });
       // } catch (error) {
       //   console.error("Error evaluating code cleanliness:", error);
       // }
@@ -149,10 +143,7 @@ export default {
 
         let responseGet = await axios.request(optionsGet);
 
-        while (
-          responseGet.data.status.id === 2 ||
-          responseGet.data.status.id === 1
-        ) {
+        while (responseGet.data.status.id === 2 || responseGet.data.status.id === 1) {
           await new Promise((resolve) => setTimeout(resolve, 2000));
           responseGet = await axios.request(optionsGet);
         }
@@ -188,8 +179,7 @@ export default {
       this.socket.emit("getQuestion", this.lobbyCode);
       this.socket.once("receivedQuetion", (question) => {
         this.Question = question.Question;
-        this.ExpectedOutput =
-          "Expected output:\n\n" + String(question.ExpectedOutput);
+        this.ExpectedOutput = "Expected output:\n\n" + String(question.ExpectedOutput);
         this.Language = question.Language;
         this.ActualOutput = question.ActualOutput;
         this.loadRequestProperties();

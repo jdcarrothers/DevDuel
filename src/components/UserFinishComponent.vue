@@ -1,39 +1,38 @@
 <template>
-    <div class="quiz-completion-container">
-      <h2 class="completion-heading">You finished the question!</h2>
-      <div class="code-rating-section">
-        <p>Your code rating:</p>
-        <p class="code-rating">{{ codeRating }}%</p>
-      </div>
-      <div class="code-reasoning-section">
-        <p>Feedback on your code:</p>
-        <p class="code-reasoning">{{ codeReasoning }}</p>
-      </div>
+  <div class="quiz-completion-container">
+    <h2 class="completion-heading">You finished the question!</h2>
+    <div class="code-rating-section">
+      <p>Your code rating:</p>
+      <p class="code-rating">{{ codeRating }}%</p>
     </div>
-  </template>
-  
+    <div class="code-reasoning-section">
+      <p>Feedback on your code:</p>
+      <p class="code-reasoning">{{ codeReasoning }}</p>
+    </div>
+  </div>
+</template>
 
 <script>
 export default {
-  name: 'UserFinishComponent',
+  name: "UserFinishComponent",
   data() {
     return {
-        codeRating: null,
-        codeReasoning: "",
+      codeRating: null,
+      codeReasoning: "",
     };
-    },
-    mounted() {
-      this.codeRating = localStorage.getItem('codeRating');
-      this.codeReasoning = localStorage.getItem('codeReasoning');
-      localStorage.removeItem('codeRating');
-      localStorage.removeItem('codeReasoning');
-    },
+  },
+  mounted() {
+    this.codeRating = localStorage.getItem("codeRating");
+    this.codeReasoning = localStorage.getItem("codeReasoning");
+    localStorage.removeItem("codeRating");
+    localStorage.removeItem("codeReasoning");
+  },
 };
 </script>
 
 <style scoped>
 .quiz-completion-container {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,7 +48,8 @@ export default {
   margin-bottom: 20px;
 }
 
-.code-rating-section, .code-reasoning-section {
+.code-rating-section,
+.code-reasoning-section {
   margin: 10px 0;
 }
 

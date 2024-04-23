@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import socketio from 'socket.io-client';
+import socketio from "socket.io-client";
 
 export default {
   data() {
@@ -28,14 +28,14 @@ export default {
   methods: {
     initializeSocket() {
       this.socket = socketio(process.env.VUE_APP_SERVER_URL);
-      this.socket.on('connect', () => {
-        console.log('Connected to server');
+      this.socket.on("connect", () => {
+        console.log("Connected to server");
       });
     },
     checkGameStart() {
       const intervalId = setInterval(() => {
-        this.socket.emit('checkForGameStart', this.lobbyCode);
-        this.socket.once('gameStartCheck', gameStatus => {
+        this.socket.emit("checkForGameStart", this.lobbyCode);
+        this.socket.once("gameStartCheck", (gameStatus) => {
           if (gameStatus !== "notStarted") {
             clearInterval(intervalId);
             this.navigateToGame();
@@ -46,17 +46,17 @@ export default {
     navigateToGame() {
       this.$router.push({
         path: `/lobby/${this.lobbyCode}`,
-        query: { lobbyCode: this.lobbyCode, username: this.username }
+        query: { lobbyCode: this.lobbyCode, username: this.username },
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
 .waiting-lobby-container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   max-width: 600px;
   margin: 40px auto;

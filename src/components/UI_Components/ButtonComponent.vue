@@ -1,17 +1,16 @@
 <template>
-      <button class="btn">
-        <span>{{ Text }}</span>
-      </button>
+  <button class="btn">
+    <span>{{ Text }}</span>
+  </button>
 </template>
 
 <script>
 export default {
-  name: 'ButtonComponent',
+  name: "ButtonComponent",
   props: {
-    Text: String
+    Text: String,
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 
@@ -19,8 +18,8 @@ export default {
 .btn {
   width: 100%;
   padding: 15px;
-  background-color: #007BFF;
-  color: #FFFFFF;
+  background-color: #007bff;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -28,11 +27,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 .btn:hover {
   background-color: #0056b3;
-  transform: translateY(-2px); 
+  transform: translateY(-2px);
 }
 </style>

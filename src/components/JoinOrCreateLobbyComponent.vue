@@ -1,13 +1,28 @@
 <template>
   <div class="container">
-    <p class="intro-text">Connect to a game by entering the game ID and your name. Host a game by clicking the host button.</p>
+    <p class="intro-text">
+      Connect to a game by entering the game ID and your name. Host a game by clicking the
+      host button.
+    </p>
 
     <div class="connect">
       <label for="lobbyID" class="input-label">Game ID</label>
-      <input id="lobbyID" v-model="joinCredLobbyID" type="text" placeholder="Enter Lobby ID" class="input-field">
+      <input
+        id="lobbyID"
+        v-model="joinCredLobbyID"
+        type="text"
+        placeholder="Enter Lobby ID"
+        class="input-field"
+      />
 
       <label for="username" class="input-label">Nickname</label>
-      <input id="username" v-model="joinCredUsername" type="text" placeholder="Enter Your Nickname" class="input-field">
+      <input
+        id="username"
+        v-model="joinCredUsername"
+        type="text"
+        placeholder="Enter Your Nickname"
+        class="input-field"
+      />
 
       <button class="btn" @click="connectToGame">Connect</button>
     </div>
@@ -21,70 +36,70 @@
 </template>
 
 <script>
-import socketio from 'socket.io-client';
+import socketio from "socket.io-client";
 
 export default {
   data() {
     return {
       socket: null,
       joinCredUsername: "",
-      joinCredLobbyID: ""
+      joinCredLobbyID: "",
     };
   },
   computed: {
     lobbyCodeFromParams() {
       return this.$route.params.lobbyCode;
-    }
+    },
   },
   mounted() {
     console.log(process.env.VUE_APP_SERVER_URL);
     this.socket = socketio(process.env.VUE_APP_SERVER_URL);
-    this.socket.on('connect', () => {
-      console.log('Connected to server');
+    this.socket.on("connect", () => {
+      console.log("Connected to server");
     });
   },
   methods: {
     connectToGame() {
       const joinLobbyRequest = {
         userID: this.joinCredUsername,
-        lobbyID: this.joinCredLobbyID
+        lobbyID: this.joinCredLobbyID,
       };
-      this.socket.emit('joinLobbyRequest', joinLobbyRequest);
-      this.socket.once('lobbyJoinResponse', success => {
+      this.socket.emit("joinLobbyRequest", joinLobbyRequest);
+      this.socket.once("lobbyJoinResponse", (success) => {
         if (success) {
           this.$router.push({
             path: `/join/${this.joinCredLobbyID}`,
             query: {
               lobbyCode: this.joinCredLobbyID,
-              username: this.joinCredUsername
+              username: this.joinCredUsername,
             },
             params: {
               lobbyCode: this.joinCredLobbyID,
-              username: this.joinCredUsername
-            }
+              username: this.joinCredUsername,
+            },
           });
         } else {
-          alert('Lobby does not exist');
+          alert("Lobby does not exist");
         }
       });
     },
     hostGame() {
-      this.socket.emit('createLobbyRequest');
-      this.socket.once('lobbyCreated', newLobby => {
+      this.socket.emit("createLobbyRequest");
+      this.socket.once("lobbyCreated", (newLobby) => {
         this.$router.push({
           path: `/host/${newLobby.lobbyCode}`,
-          query: { lobbyCode: newLobby.lobbyCode }
+          query: { lobbyCode: newLobby.lobbyCode },
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .container {
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
   max-width: 600px;
   margin: 40px auto;
@@ -124,7 +139,7 @@ h2 {
   border: 2px solid #d0d9e6; /* Consistent with theme */
   border-radius: 4px;
   width: 80%;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .btn {
@@ -156,7 +171,8 @@ h2 {
     padding: 20px 10px;
   }
 
-  .input-field, .btn {
+  .input-field,
+  .btn {
     width: 90%; /* Adjust input and button width for smaller screens */
   }
 }
