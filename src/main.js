@@ -1,10 +1,9 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-
+import store from './store';
 import App from './App.vue'
 import LobbyAdminPanelComponent from './components/LobbyAdminPanelComponent.vue'
 import LiveQuestionComponent from './components/LiveComponent.vue'
-import JoinOrCreateLobbyComponent from './components/JoinOrCreateLobbyComponent.vue'
 import LobbyUserPanelComponent from './components/LobbyUserPanelComponent.vue'
 import AdminQuizOverviewComponent from './components/AdminQuizOverviewComponent.vue'
 import SigninComponent from './components/SigninComponent.vue'
@@ -15,28 +14,24 @@ import UserFinishComponent from './components/UserFinishComponent.vue'
 const routes = [
   { 
     name: 'LiveQuestion',
-    path: '/lobby/:lobbyID', 
+    path: '/lobby/:lobbyID/', 
     component: LiveQuestionComponent,
   },
   { 
-    name: 'HostLobbyAdmin',
-    path: '/host/:lobbyID', 
-    component: LobbyAdminPanelComponent,
+      path: '/host/:lobbyID', // Use a dynamic segment to receive the lobbyCode
+      name: 'Host',
+      component: LobbyAdminPanelComponent,
+      props: false  // Enables props being passed as route parameters
   },
   { 
     name: 'UserLobby',
-    path: '/join/:lobbyID', 
+    path: '/join/:lobbyCode/', 
     component: LobbyUserPanelComponent,
     params: true
   },
   { 
-    name: 'CreateLobby',
-    path: '/connect', 
-    component: JoinOrCreateLobbyComponent 
-  },
-  { 
     name: 'AdminQuizOverview',
-    path: '/admin/:lobbyID', 
+    path: '/admin/:lobbyCode/', 
     component: AdminQuizOverviewComponent 
   },
   {
@@ -59,13 +54,13 @@ const routes = [
   ,
   {
     name: 'HostFinish',
-    path: '/end/:lobbyID',
+    path: '/end/:lobbyCode/',
     component: HostFinishComponent
   }
   ,
   {
     name: 'UserFinish',
-    path: '/endUser/:lobbyID',
+    path: '/endUser/',
     component: UserFinishComponent
   }
 ]
@@ -78,6 +73,6 @@ const router = createRouter({
 
 const app = createApp(App)
   
-
+app.use(store);
 app.use(router)
 app.mount('#app')

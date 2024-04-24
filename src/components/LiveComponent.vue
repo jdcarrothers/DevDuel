@@ -37,6 +37,7 @@ import { java } from "@codemirror/lang-java";
 import { rust } from "@codemirror/lang-rust";
 import socketio from "socket.io-client";
 import axios from "axios";
+import { mapState } from "vuex";
 
 export default {
   name: "LiveComponent",
@@ -48,20 +49,24 @@ export default {
       code: "",
       extensions: [],
       socket: null,
-      lobbyCode: null,
       ExpectedOutput: "",
       Question: "",
       Language: "",
       codeOutput: "",
       language_id: null,
       ActualOutput: "",
-      username: "",
     };
   },
+  computed: {
+    ...mapState({
+      lobbyID: (state) => state.lobbyID,
+      username: (state) => state.username,
+    }),
+  },
+
   mounted() {
-    this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
-    this.username = this.$route.query.username || this.$route.params.username;
     this.initializeSocket();
+    console.log("This is vuex Lobby ID: in live comp", this.lobbyID);
     this.loadCorrectQuestion();
   },
   methods: {
@@ -91,7 +96,7 @@ export default {
       localStorage.setItem("codeRating", codeR);
       localStorage.setItem("codeReasoning", codeReason);
       this.$router.push({
-        path: `/endUser/${this.lobbyCode}`,
+        path: `/endUser/${this.lobbyID}`,
       });
       // } catch (error) {
       //   console.error("Error evaluating code cleanliness:", error);
@@ -160,7 +165,7 @@ export default {
         this.codeOutput = String(this.codeOutput);
         if (this.codeOutput.trim() === this.ActualOutput.trim()) {
           const jsonObject = {
-            lobbyID: this.lobbyCode,
+            lobbyID: this.lobbyID,
             username: this.username,
           };
           JSON.stringify(jsonObject);
@@ -176,8 +181,11 @@ export default {
     },
 
     loadCorrectQuestion() {
-      this.socket.emit("getQuestion", this.lobbyCode);
-      this.socket.once("receivedQuetion", (question) => {
+      console.log("Loading correct question");
+      console.log("This is vuex Lobby ID inside load question", this.lobbyID);
+      this.socket.emit("getQuestion", this.lobbyID);
+      this.socket.once("receivedQuestion", (question) => {
+        console.log("Received question", question);
         this.Question = question.Question;
         this.ExpectedOutput = "Expected output:\n\n" + String(question.ExpectedOutput);
         this.Language = question.Language;

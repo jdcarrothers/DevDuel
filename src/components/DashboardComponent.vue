@@ -26,7 +26,7 @@
 
         <div class="right-container">
           <div class="lobbyJoinOrCreatePanel">
-            <LobbyJoinOrCreatePanel />
+            <LobbyJoinOrCreatePanel :username="username" />
           </div>
 
           <div class="oneVersus">

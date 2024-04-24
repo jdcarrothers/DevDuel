@@ -1,8 +1,8 @@
 <template>
   <div class="waiting-lobby-container">
     <div class="lobby-details">
-      <h1>Lobby code: {{ lobbyCode }}</h1>
-      <h2>Username: {{ username }}</h2>
+      <h1>Lobby code: {{ this.lobbyID }}</h1>
+      <h2>Username: {{ this.username }}</h2>
     </div>
     <h2 class="waiting-message">Waiting on host to start</h2>
   </div>
@@ -10,19 +10,24 @@
 
 <script>
 import socketio from "socket.io-client";
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
       socket: null,
-      lobbyCode: null,
-      username: "",
     };
   },
+  computed: {
+    ...mapState({
+      lobbyID: (state) => state.lobbyID,
+      username: (state) => state.username,
+    }),
+  },
   mounted() {
-    this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
-    this.username = this.$route.query.username || this.$route.params.username;
     this.initializeSocket();
+    console.log(this.lobbyID);
+    console.log(this.username);
     this.checkGameStart();
   },
   methods: {
@@ -34,7 +39,7 @@ export default {
     },
     checkGameStart() {
       const intervalId = setInterval(() => {
-        this.socket.emit("checkForGameStart", this.lobbyCode);
+        this.socket.emit("checkForGameStart", this.lobbyID);
         this.socket.once("gameStartCheck", (gameStatus) => {
           if (gameStatus !== "notStarted") {
             clearInterval(intervalId);
@@ -45,8 +50,7 @@ export default {
     },
     navigateToGame() {
       this.$router.push({
-        path: `/lobby/${this.lobbyCode}`,
-        query: { lobbyCode: this.lobbyCode, username: this.username },
+        path: `/lobby/${this.lobbyID}`,
       });
     },
   },

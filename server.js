@@ -178,9 +178,15 @@ app.post('/api/signup', async (req, res) => {
         console.log(lobbies)
         try {
             const lobbyID = parseInt(receivedData.lobbyID);
-            console.log(lobbyID);
-            console.log(receivedData);
             const userID = receivedData.userID;
+            console.log("server lID")
+            console.log(lobbyID);
+            console.log("server uID")
+            console.log(userID);
+
+            if (!lobbyID || !userID) {
+                socket.emit('lobbyJoinResponse', false);
+            }
             const lobbyIndex = findLobbyIndex(lobbyID);
 
             if (lobbyIndex !== -1) {
@@ -250,14 +256,21 @@ app.post('/api/signup', async (req, res) => {
     
     });
     socket.on('getQuestion', (lID) => {
-        console.log("get q test");
-        const lobbyIndex = findLobbyIndex(parseInt(lID));
-        console.log(lobbyIndex);
-        const lobby = lobbies[lobbyIndex];
-        console.log(lobby);
-        console.log(lobby.currentQuestion);
-        socket.emit('receivedQuetion', lobby.currentQuestion);
-    });
+        try {
+            console.log(lID + "yrrrrrr im the server and i got hit")
+            const lobbyIndex = findLobbyIndex(parseInt(lID));
+            console.log(lobbyIndex)
+            const lobby = lobbies[lobbyIndex];
+            console.log(lobby)
+            const question = lobby.currentQuestion;
+            socket.emit('receivedQuestion', question);
+        }
+        catch (error) {
+            console.error('Error:', error);
+        }
+    })
+        
+
 
     socket.on('correctAnswerAlert', (receivedData) => {
         const lID = receivedData.lobbyID;

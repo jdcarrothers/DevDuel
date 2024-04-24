@@ -1,7 +1,7 @@
 <template>
   <div class="container-main">
     <div class="lobby-container">
-      <h1 class="lobby-code">Lobby Code: {{ lobbyCode }}</h1>
+      <h1 class="lobby-code">Lobby Code: {{ lobbyID }}</h1>
       <div v-if="players.length > 0" class="player-list">
         <h2>Players who have completed the question and got it correct will show here</h2>
         <div class="player-grid">
@@ -22,19 +22,23 @@
 
 <script>
 import socketio from "socket.io-client";
-
+import { mapState } from "vuex";
 export default {
   name: "AdminQuizOverviewComponent",
   mounted() {
     this.initializeSocket();
-    this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
+    console.log("This is vuex Lobby ID:", this.lobbyID);
     this.pollForPlayersWhoHaveCompleted();
+  },
+  computed: {
+    ...mapState({
+      lobbyID: (state) => state.lobbyID,
+    }),
   },
   data() {
     return {
       socket: null,
       players: [],
-      lobbyCode: null,
     };
   },
   methods: {
@@ -46,7 +50,7 @@ export default {
     },
     pollForPlayersWhoHaveCompleted() {
       setInterval(() => {
-        this.socket.emit("checkForPlayers", this.lobbyCode);
+        this.socket.emit("checkForPlayers", this.lobbyID);
         this.socket.once("recentPlayers", (players) => {
           this.players = players;
         });
@@ -54,8 +58,7 @@ export default {
     },
     endGame() {
       this.$router.push({
-        path: `/end/${this.lobbyCode}`,
-        query: { lobbyCode: this.lobbyCode },
+        path: `/end/${this.lobbyID}`,
       });
     },
   },

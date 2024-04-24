@@ -1,7 +1,7 @@
 <template>
   <div class="container-main">
     <div class="lobby-container">
-      <h1 class="lobby-code">Lobby code: {{ lobbyCode }}</h1>
+      <h1 class="lobby-code">Lobby code: {{ this.lobbyID }}</h1>
       <div v-if="players.length" class="player-list">
         <h2>Players:</h2>
         <div class="player-grid">
@@ -27,13 +27,13 @@
 
 <script>
 import socketio from "socket.io-client";
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
       socket: null,
       players: [],
-      lobbyCode: "",
       choice: " ", // Remove the extra space
       QuestionDecisionHeader: "Choose an option",
       btnOneText: "Select a random coding problem",
@@ -42,10 +42,15 @@ export default {
       ExpectedOutput: " ",
     };
   },
+  computed: {
+    ...mapState({
+      lobbyID: (state) => state.lobbyID,
+    }),
+  },
   mounted() {
     this.initializeSocket();
-    this.lobbyCode = this.$route.query.lobbyCode || this.$route.params.lobbyCode;
     this.pollForPlayers();
+    console.log("This is vuex Lobby ID:", this.lobbyID);
   },
   methods: {
     initializeSocket() {
@@ -56,28 +61,22 @@ export default {
     },
     pollForPlayers() {
       setInterval(() => {
-        this.socket.emit("checkForPlayers", this.lobbyCode);
+        this.socket.emit("checkForPlayers", this.lobbyID);
         this.socket.once("recentPlayers", (players) => {
           this.players = players;
         });
       }, 300);
     },
     startQuiz() {
-      this.socket.emit("startQuiz", this.lobbyCode);
+      this.socket.emit("startQuiz", this.lobbyID);
       this.$router.push({
-        path: `/admin/${this.lobbyCode}`,
-        query: {
-          lobbyCode: this.lobbyCode,
-        },
-        params: {
-          lobbyCode: this.lobbyCode,
-        },
+        path: `/admin/${this.lobbyID}`,
       }); // Redirect to the quiz page
     },
     pickRandomQuestion() {
       this.QuestionDecisionHeader = "Loading a random question... ";
       this.btnOneText = "Selected";
-      this.socket.emit("requestRandomQuestion", this.lobbyCode);
+      this.socket.emit("requestRandomQuestion", this.lobbyID);
       this.socket.once("questionSent", (question) => {
         if (question.Question === this.Question) {
           this.pickRandomQuestion();
