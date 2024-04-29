@@ -133,6 +133,7 @@ import {
   TwitterAuthProvider,
 } from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -159,7 +160,19 @@ export default {
     };
   },
   mounted() {
-    //do if user signed in, relocate.
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const uid = user.uid;
+          console.log("User is signed in with uid:", uid);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        console.log("No user is signed in.");
+      }
+    });
   },
   methods: {
     validateForm() {

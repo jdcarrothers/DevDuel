@@ -55,7 +55,9 @@ export default {
     };
   },
   created() {
-    this.updateBadgeStatus();
+    setTimeout(() => {
+      this.updateBadgeStatus();
+    }, 1000);
   },
   methods: {
     updateBadgeStatus() {
@@ -64,6 +66,8 @@ export default {
       if (!this.isPremium && this.Wins === 0) {
         this.badgeMessage = "Get a second badge by winning your first game!";
       }
+      console.log("Badge status updated");
+      console.log(this.tenOrMoreWins);
     },
   },
 };

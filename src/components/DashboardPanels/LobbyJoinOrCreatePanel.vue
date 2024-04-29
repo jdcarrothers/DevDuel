@@ -1,13 +1,25 @@
 <template>
   <div class="panel">
-    <p>Choose an option below to join an existing lobby or create a new one.</p>
-    <InputComponent :PlaceholderText="'Enter Lobby Code'" v-model="lobbyID" />
-    <p>{{ lobbyID }}</p>
-    <ButtonComponent @click="connectToGame" :Text="'Join Lobby'" />
-    <ButtonComponent @click="hostGame" :Text="'Create Lobby'" />
+    <header class="panel-header">
+      <h1>Join or Create Lobby</h1>
+      <p>
+        Select an option to proceed with either joining an existing lobby or creating a
+        new one.
+      </p>
+    </header>
+    <section class="input-section">
+      <InputComponent :PlaceholderText="'Enter Lobby Code'" v-model="lobbyID" />
+    </section>
+    <section class="button-section">
+      <div class="btn1">
+        <ButtonComponent @click="connectToGame" :Text="'Join Lobby'" />
+      </div>
+      <div class="btn2">
+        <ButtonComponent @click="hostGame" :Text="'Create Lobby'" />
+      </div>
+    </section>
   </div>
 </template>
-
 <script>
 import socketio from "socket.io-client";
 import InputComponent from "../UI_Components/InputComponent.vue";
@@ -32,6 +44,13 @@ export default {
     ...mapActions(["updateLobbyID", "updateUsername"]),
 
     connectToGame() {
+      if (this.lobbyID === "") {
+        alert("Please enter a lobby code");
+        return;
+      } else if (this.username === "") {
+        alert("Please sign in to join a lobby");
+        return;
+      }
       const joinLobbyRequest = {
         userID: this.username,
         lobbyID: this.lobbyID,
@@ -79,15 +98,28 @@ export default {
 
 <style scoped>
 .panel {
-  font-family: Arial, sans-serif;
+  font-family: "Arial", sans-serif;
   display: flex;
   flex-direction: column;
+  align-items: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   border-radius: 16px;
   color: #333;
   text-align: center;
   padding: 20px;
-  transition: all 0.3s ease;
-  max-width: 260px;
+  max-width: 320px;
+}
+
+.panel-header {
+  margin-bottom: 20px;
+}
+
+.input-section,
+.button-section {
+  width: 100%;
+  margin: 10px 0;
+}
+.btn2 {
+  margin-top: 15px;
 }
 </style>

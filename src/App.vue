@@ -6,13 +6,13 @@
 </template>
 
 <script>
-import NavBarComponent from './components/NavBarComponent.vue';
-import { onAuthStateChanged } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
+import NavBarComponent from "./components/NavBarComponent.vue";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { getAuth } from "firebase/auth";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    NavBarComponent
+    NavBarComponent,
   },
   computed: {
     shouldShowNavbar() {
@@ -20,19 +20,18 @@ export default {
     },
   },
   mounted() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (!user && this.$route.meta.requiresAuth) {
-        this.$router.push('/signin');
-      }
-      else{
-        this.$router.push('/dashboard');
-      }
-    });
+    // const auth = getAuth();
+    // onAuthStateChanged(auth, (user) => {
+    //   if (user == null) {
+    //     if (!this.$route.meta.hideNavbar) this.$router.push("/signin");
+    //     // Redirect to signin page if user is not signed in
+    //     else this.$router.push("/signin");
+    //   } else {
+    //     this.$router.push("/dashboard");
+    //   }
+    // });
   },
-}
-
+};
 </script>
 
-<style>
-</style>
+<style></style>

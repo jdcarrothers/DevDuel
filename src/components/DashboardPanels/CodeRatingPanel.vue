@@ -50,7 +50,9 @@ export default {
   },
   data() {},
   mounted() {
-    this.animateCircle();
+    setTimeout(() => {
+      this.animateCircle();
+    }, 1000);
   },
   computed: {
     circumference() {

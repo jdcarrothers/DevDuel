@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 const { OpenAI } = require("openai");
+const { profile } = require('console');
 require('dotenv').config();
 
 
@@ -127,6 +128,38 @@ function randomProfilePicture() {
     ];
     return images[Math.floor(Math.random() * images.length)];
 }
+app.post("/api/fetchUserData", async (req, res) => {
+    const uid = req.body.uid;
+    try {
+        const usersQuerySnapshot = await getDocs(query(collection(db, "Users"), where("uid", "==", uid)));
+        if (!usersQuerySnapshot.empty) {
+        const userData = usersQuerySnapshot.docs[0].data();
+        const userStats = {
+            Wins: userData.Wins,
+            username: userData.username,
+            problemsSolved: userData.problemsSolved,
+            codeRating: userData.codeRating,
+            gamesPlayed: userData.gamesPlayed,
+            isPremium: userData.isPremium,
+            duelsWon: userData.duelsWon,
+            duelsLost: userData.duelsLost,
+            forname: userData.forename,
+            profilePicture: userData.profilePicture,
+            duelsLost: userData.duelsLost,
+            duelsWon: userData.duelsWon,
+        };
+        console.log(userStats);
+        res.status(200).send(userStats);
+        } else {
+        res.status(404).send({ message: "User not found" });
+        }
+    } catch (e) {
+        res.status(500).send({ message: "Error fetching user data", error: e.message });
+    }
+    }
+    );
+
+        //creates the user in the database with default stats.
 app.post('/api/signup', async (req, res) => {
     try {
         console.log(req.body);
